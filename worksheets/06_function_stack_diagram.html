@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>🧩 関数呼び出しスタック図 (引数・戻り値追跡)</title>
+  <style>
+    @page { size: A4 portrait; margin: 12mm; }
+    body { font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif; color: #1e293b; margin: 0; padding: 20px; background: #f8fafc; }
+    .print-container { max-width: 210mm; min-height: 270mm; background: white; margin: 0 auto; padding: 15mm; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); box-sizing: border-box; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #2563eb; padding-bottom: 6px; margin-bottom: 16px; }
+    .sheet-title { font-size: 1.4rem; font-weight: bold; color: #1e3a8a; }
+    .sheet-sub { font-size: 0.85rem; color: #64748b; }
+    .meta-info { display: flex; gap: 24px; margin-bottom: 16px; font-size: 0.95rem; }
+    .meta-field { border-bottom: 1px solid #94a3b8; padding: 2px 8px; flex-grow: 1; }
+    .stack-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .box { border: 1.5px solid #334155; border-radius: 6px; padding: 10px; background: #ffffff; }
+    .box-title { font-size: 0.85rem; font-weight: bold; color: #1e40af; margin-bottom: 6px; }
+    .sample-text { color: #2563eb; font-weight: bold; display: none; }
+    .show-sample .sample-text { display: block; }
+    .show-sample .sample-placeholder { display: none; }
+    .control-panel { max-width: 210mm; margin: 0 auto 12px auto; display: flex; justify-content: space-between; align-items: center; background: #e0e7ff; padding: 10px 16px; border-radius: 8px; }
+    .btn-print { background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print {
+      body { background: white; padding: 0; }
+      .print-container { border: none; box-shadow: none; padding: 0; width: 100%; }
+      .control-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="control-panel">
+    <label style="font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;color:#1e3a8a;">
+      <input type="checkbox" id="sampleToggle" onchange="document.body.classList.toggle('show-sample', this.checked)">
+      ✏️ 記入例（模範解答）を表示する
+    </label>
+    <button class="btn-print" onclick="window.print()">🖨️ A4用紙に印刷する</button>
+  </div>
+
+  <div class="print-container">
+    <div class="sheet-header">
+      <div class="sheet-title">🧩 関数呼び出しスタック図 (引数・戻り値の追跡)</div>
+      <div class="sheet-sub">『ブロック学習帳』 ワークシート No.6</div>
+    </div>
+
+    <div class="meta-info">
+      <div>年・組・番号: <span class="meta-field"><span class="sample-text">高1-2 30番</span></span></div>
+      <div>氏名: <span class="meta-field"><span class="sample-text">渡辺 蓮</span></span></div>
+      <div>関数名: <span class="meta-field"><span class="sample-text">`calc_tax(price)` (消費税計算関数)</span></span></div>
+    </div>
+
+    <div class="stack-grid">
+      <div class="box">
+        <div class="box-title">【1. メイン処理（呼び出し側）】</div>
+        <div style="font-size:0.85rem;line-height:1.8;">
+          <span class="sample-placeholder" style="color:#94a3b8;">（メイン処理の動作）</span>
+          <div class="sample-text">
+            ・`定価 = 1000`<br>
+            ・`税込額 = calc_tax(定価)` を呼び出す。<br>
+            ・戻ってきた `税込額` (1100) を画面に表示する。
+          </div>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">【2. 呼び出される関数（サブルーチン）】</div>
+        <div style="font-size:0.85rem;line-height:1.8;">
+          <span class="sample-placeholder" style="color:#94a3b8;">（関数の定義と内部処理）</span>
+          <div class="sample-text">
+            <strong>関数 `calc_tax(price)`:</strong><br>
+            ・受け取る引数 `price` (1000)<br>
+            ・内部計算: `tax_price = price * 1.10`<br>
+            ・`return tax_price` (1100 を返す)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box" style="margin-bottom:16px;">
+      <div class="box-title">【3. 引数 (input) と 戻り値 (return) の値の受け渡し図】</div>
+      <div style="height:120px;border:1px dashed #94a3b8;background:#fafafa;border-radius:4px;display:flex;align-items:center;justify-content:center;">
+        <span class="sample-placeholder" style="color:#94a3b8;font-size:0.85rem;">（引数と戻り値の流れを矢印で描こう）</span>
+        <div class="sample-text" style="font-size:0.85rem;text-align:center;">
+          [メイン処理] ──(引数: price=1000)──&gt; [関数 calc_tax]<br><br>
+          [メイン処理] &lt;──(戻り値: 1100)────── [関数 calc_tax]
+        </div>
+      </div>
+    </div>
+
+    <div class="box" style="height:70px;">
+      <div class="box-title">【4. 関数（再利用可能な部品）を使うメリット】</div>
+      <div style="font-size:0.85rem;">
+        <span class="sample-placeholder" style="color:#94a3b8;">（関数化の利点）</span>
+        <div class="sample-text">
+          同じ税計算の処理を何度も書かずに使い回せることや、税率が変わった時に関数内部だけを修正すれば済む点。
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

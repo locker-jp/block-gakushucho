@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>📱 画面設計シート（Web帳票）</title>
+  <style>
+    @page { size: A4 portrait; margin: 12mm; }
+    body { font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif; color: #1e293b; margin: 0; padding: 20px; background: #f8fafc; }
+    .print-container { max-width: 210mm; min-height: 270mm; background: white; margin: 0 auto; padding: 15mm; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); box-sizing: border-box; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #2563eb; padding-bottom: 6px; margin-bottom: 16px; }
+    .sheet-title { font-size: 1.5rem; font-weight: bold; color: #1e3a8a; }
+    .sheet-sub { font-size: 0.85rem; color: #64748b; }
+    .meta-info { display: flex; gap: 24px; margin-bottom: 16px; font-size: 0.95rem; }
+    .meta-field { border-bottom: 1px solid #94a3b8; padding: 2px 8px; flex-grow: 1; }
+    .design-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .box { border: 1.5px solid #334155; border-radius: 6px; padding: 10px; background: #ffffff; position: relative; }
+    .box-title { font-size: 0.9rem; font-weight: bold; color: #1e40af; margin-bottom: 6px; }
+    .stage-canvas { height: 260px; border: 1px dashed #94a3b8; background: #fafafa; border-radius: 4px; display: flex; align-items: center; justify-content: center; position: relative; }
+    .sample-text { color: #2563eb; font-weight: bold; font-style: italic; display: none; }
+    .show-sample .sample-text { display: block; }
+    .show-sample .sample-placeholder { display: none; }
+    .control-panel { max-width: 210mm; margin: 0 auto 12px auto; display: flex; justify-content: space-between; align-items: center; background: #e0e7ff; padding: 10px 16px; border-radius: 8px; }
+    .btn-print { background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print {
+      body { background: white; padding: 0; }
+      .print-container { border: none; box-shadow: none; padding: 0; width: 100%; }
+      .control-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="control-panel">
+    <label style="font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;color:#1e3a8a;">
+      <input type="checkbox" id="sampleToggle" onchange="document.body.classList.toggle('show-sample', this.checked)">
+      ✏️ 記入例（模範解答）を表示する
+    </label>
+    <button class="btn-print" onclick="window.print()">🖨️ A4用紙に印刷する</button>
+  </div>
+
+  <div class="print-container">
+    <div class="sheet-header">
+      <div class="sheet-title">📱 画面設計シート (UI/UXデザイン)</div>
+      <div class="sheet-sub">『ブロック学習帳』 ワークシート No.1</div>
+    </div>
+
+    <div class="meta-info">
+      <div>年・組・番号: <span class="meta-field"><span class="sample-text">5年1組 12番</span></span></div>
+      <div>氏名: <span class="meta-field"><span class="sample-text">山田 太郎</span></span></div>
+      <div>作品タイトル: <span class="meta-field"><span class="sample-text">ねこキャッチゲーム</span></span></div>
+    </div>
+
+    <div class="design-grid">
+      <div class="box">
+        <div class="box-title">【1. 画面レイアウト（キャラ・ボタン配置）】</div>
+        <div class="stage-canvas">
+          <span class="sample-placeholder" style="color:#94a3b8;font-size:0.85rem;">（ここに画面やボタンの配置図を描く）</span>
+          <div class="sample-text" style="width:100%;height:100%;padding:10px;box-sizing:border-box;font-size:0.85rem;line-height:1.6;">
+            [背景: 星空]<br>
+            ・左上: スコア表示「点数: 0」<br>
+            ・中央: ねこスプライト (主人公)<br>
+            ・上から降ってくる: りんご (アイテム)<br>
+            ・右下: 「スタート」ボタン
+          </div>
+        </div>
+      </div>
+
+      <div class="box" style="display:flex;flex-direction:column;">
+        <div class="box-title">【2. 登場する要素と役割】</div>
+        <div style="font-size:0.85rem;line-height:1.8;flex-grow:1;">
+          <span class="sample-placeholder" style="color:#94a3b8;">（キャラやボタンの動作メモ）</span>
+          <div class="sample-text">
+            <strong>・ねこ（主人公）：</strong><br>左右キーで左右に動く。<br>
+            <strong>・りんご（アイテム）：</strong><br>上から下へ落ちてくる。ねこに触れたら消えてスコア+1。<br>
+            <strong>・スタートボタン：</strong><br>クリックするとゲームが始まる。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="box" style="min-height:140px;">
+      <div class="box-title">【3. プログラムの全体のながれ・工夫したポイント】</div>
+      <div style="font-size:0.85rem;line-height:1.8;">
+        <span class="sample-placeholder" style="color:#94a3b8;">（工夫した点や処理の順番を文章で書こう）</span>
+        <div class="sample-text">
+          りんごがランダムな位置（X座標）から落ちてくるように乱数ブロックを使いました。ねこに当たった時に「ニャー」と音が鳴るように工夫しました。
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

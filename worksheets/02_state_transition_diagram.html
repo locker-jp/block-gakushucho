@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>🔄 状態遷移図ワークシート (自動制御・理科)</title>
+  <style>
+    @page { size: A4 landscape; margin: 10mm; }
+    body { font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif; color: #1e293b; margin: 0; padding: 15px; background: #f8fafc; }
+    .print-container { max-width: 275mm; min-height: 180mm; background: white; margin: 0 auto; padding: 12mm; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); box-sizing: border-box; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #2563eb; padding-bottom: 6px; margin-bottom: 12px; }
+    .sheet-title { font-size: 1.4rem; font-weight: bold; color: #1e3a8a; }
+    .sheet-sub { font-size: 0.85rem; color: #64748b; }
+    .meta-info { display: flex; gap: 24px; margin-bottom: 12px; font-size: 0.9rem; }
+    .meta-field { border-bottom: 1px solid #94a3b8; padding: 2px 8px; flex-grow: 1; }
+    .transition-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 12px; }
+    .box { border: 1.5px solid #334155; border-radius: 6px; padding: 10px; background: #ffffff; }
+    .box-title { font-size: 0.85rem; font-weight: bold; color: #1e40af; margin-bottom: 6px; }
+    .state-canvas { height: 180px; border: 1px dashed #94a3b8; background: #fafafa; border-radius: 4px; display: flex; align-items: center; justify-content: center; position: relative; }
+    .sample-text { color: #2563eb; font-weight: bold; display: none; }
+    .show-sample .sample-text { display: block; }
+    .show-sample .sample-placeholder { display: none; }
+    .control-panel { max-width: 275mm; margin: 0 auto 10px auto; display: flex; justify-content: space-between; align-items: center; background: #e0e7ff; padding: 8px 16px; border-radius: 8px; }
+    .btn-print { background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print {
+      body { background: white; padding: 0; }
+      .print-container { border: none; box-shadow: none; padding: 0; width: 100%; }
+      .control-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="control-panel">
+    <label style="font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;color:#1e3a8a;">
+      <input type="checkbox" id="sampleToggle" onchange="document.body.classList.toggle('show-sample', this.checked)">
+      ✏️ 記入例（模範解答）を表示する
+    </label>
+    <button class="btn-print" onclick="window.print()">🖨️ A4横用紙に印刷する</button>
+  </div>
+
+  <div class="print-container">
+    <div class="sheet-header">
+      <div class="sheet-title">🔄 状態遷移図ワークシート (自動制御・センサー学習用)</div>
+      <div class="sheet-sub">『ブロック学習帳』 ワークシート No.2</div>
+    </div>
+
+    <div class="meta-info">
+      <div>年・組・番号: <span class="meta-field"><span class="sample-text">6年2組 5番</span></span></div>
+      <div>氏名: <span class="meta-field"><span class="sample-text">佐藤 花子</span></span></div>
+      <div>対象テーマ: <span class="meta-field"><span class="sample-text">理科6年「電気の利用・自動街灯」</span></span></div>
+    </div>
+
+    <div class="transition-grid">
+      <div class="box">
+        <div class="box-title">【1. 状態遷移図（ノードと条件矢印）】</div>
+        <div class="state-canvas">
+          <span class="sample-placeholder" style="color:#94a3b8;font-size:0.8rem;">（丸ノードとセンサー矢印を描こう）</span>
+          <div class="sample-text" style="font-size:0.85rem;line-height:1.6;width:100%;padding:10px;box-sizing:border-box;">
+            [消灯状態 (OFF)] ──(暗い ＆ 人がいる)──> [点灯状態 (ON)]<br>
+            [点灯状態 (ON)]  ──(明るい OR 人がいない)─> [消灯状態 (OFF)]
+          </div>
+        </div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">【2. センサー入力と出力動作の対応表】</div>
+        <table style="width:100%;border-collapse:collapse;font-size:0.8rem;text-align:center;">
+          <tr style="background:#f1f5f9;">
+            <th style="border:1px solid #cbd5e1;padding:4px;">状態</th>
+            <th style="border:1px solid #cbd5e1;padding:4px;">暗さセンサー</th>
+            <th style="border:1px solid #cbd5e1;padding:4px;">人感センサー</th>
+            <th style="border:1px solid #cbd5e1;padding:4px;">LED出力</th>
+          </tr>
+          <tr>
+            <td style="border:1px solid #cbd5e1;padding:4px;">昼間</td>
+            <td style="border:1px solid #cbd5e1;padding:4px;"><span class="sample-text">明るい</span></td>
+            <td style="border:1px solid #cbd5e1;padding:4px;"><span class="sample-text">反応なし</span></td>
+            <td style="border:1px solid #cbd5e1;padding:4px;"><span class="sample-text">OFF (消灯)</span></td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #cbd5e1;padding:4px;">夜・人なし</td>
+            <td style="border:1px solid #cbd5e1;padding:4px;"><span class="sample-text">暗い</span></td>
+            <td style="border:1px solid #cbd5e1;padding:4px;"><span class="sample-text">反応なし</span></td>
+            <td style="border:1px solid #cbd5e1;padding:4px;"><span class="sample-text">OFF (消灯)</span></td>
+          </tr>
+          <tr>
+            <td style="border:1px solid #cbd5e1;padding:4px;">夜・人あり</td>
+            <td style="border:1px solid #cbd5e1;padding:4px;"><span class="sample-text">暗い</span></td>
+            <td style="border:1px solid #cbd5e1;padding:4px;"><span class="sample-text">反応あり</span></td>
+            <td style="border:1px solid #cbd5e1;padding:4px;"><span class="sample-text">ON (点灯)</span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="box" style="height:70px;">
+      <div class="box-title">【3. 省エネ・安全上の工夫点】</div>
+      <div style="font-size:0.8rem;">
+        <span class="sample-placeholder" style="color:#94a3b8;">（節電や安全面の工夫を記述）</span>
+        <div class="sample-text">
+          人が通り過ぎたら10秒後に自動的に消灯させて、電気の無駄遣いを防ぐプログラミングにしました。
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

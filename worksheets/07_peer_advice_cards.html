@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>💬 相互評価アドバイスカード (ピアレビューカード)</title>
+  <style>
+    @page { size: A4 portrait; margin: 10mm; }
+    body { font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif; color: #1e293b; margin: 0; padding: 15px; background: #f8fafc; }
+    .print-container { max-width: 210mm; min-height: 270mm; background: white; margin: 0 auto; padding: 10mm; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); box-sizing: border-box; }
+    .sheet-header { border-bottom: 2px solid #2563eb; padding-bottom: 4px; margin-bottom: 12px; }
+    .sheet-title { font-size: 1.3rem; font-weight: bold; color: #1e3a8a; }
+    .cards-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; }
+    .card-box { border: 2px dashed #64748b; border-radius: 8px; padding: 10px; background: #ffffff; position: relative; height: 120mm; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; }
+    .card-tag { font-size: 0.75rem; background: #e0e7ff; color: #3730a3; padding: 2px 6px; border-radius: 4px; font-weight: bold; display: inline-block; margin-bottom: 6px; }
+    .sample-text { color: #2563eb; font-weight: bold; display: none; }
+    .show-sample .sample-text { display: block; }
+    .show-sample .sample-placeholder { display: none; }
+    .control-panel { max-width: 210mm; margin: 0 auto 10px auto; display: flex; justify-content: space-between; align-items: center; background: #e0e7ff; padding: 8px 16px; border-radius: 8px; }
+    .btn-print { background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print {
+      body { background: white; padding: 0; }
+      .print-container { border: none; box-shadow: none; padding: 0; width: 100%; }
+      .control-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="control-panel">
+    <label style="font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;color:#1e3a8a;">
+      <input type="checkbox" id="sampleToggle" onchange="document.body.classList.toggle('show-sample', this.checked)">
+      ✏️ 記入例（模範解答）を表示する
+    </label>
+    <button class="btn-print" onclick="window.print()">🖨️ A4用紙に印刷する (4切り取り枚組)</button>
+  </div>
+
+  <div class="print-container">
+    <div class="sheet-header">
+      <div class="sheet-title">💬 相互評価アドバイスカード (切り取り 4枚セット)</div>
+    </div>
+
+    <div class="cards-grid">
+      <!-- カード 1 -->
+      <div class="card-box">
+        <div>
+          <span class="card-tag">✂️ 相互アドバイスカード</span>
+          <div style="font-size:0.8rem;margin-bottom:6px;">
+            発表者: <span style="border-bottom:1px solid #94a3b8;padding:0 8px;"><span class="sample-text">山田 太郎</span></span>
+            評価者: <span style="border-bottom:1px solid #94a3b8;padding:0 8px;"><span class="sample-text">佐藤 花子</span></span>
+          </div>
+          <div style="font-size:0.8rem;font-weight:bold;color:#166534;margin-top:4px;">👍 すばらしいと感じた点：</div>
+          <div style="font-size:0.8rem;min-height:40px;">
+            <span class="sample-placeholder" style="color:#94a3b8;">（良かった工夫や動き）</span>
+            <div class="sample-text">キャラクターの動きがなめらかで、効果音のタイミングがバッチリで楽しかった！</div>
+          </div>
+          <div style="font-size:0.8rem;font-weight:bold;color:#92400e;margin-top:4px;">💡 こうするともっと良くなるアドバイス：</div>
+          <div style="font-size:0.8rem;min-height:40px;">
+            <span class="sample-placeholder" style="color:#94a3b8;">（改善案やアイデア）</span>
+            <div class="sample-text">ゲームオーバーになった時に、リトライボタンがあるとさらに遊びやすくなると思います。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- カード 2 -->
+      <div class="card-box">
+        <div>
+          <span class="card-tag">✂️ 相互アドバイスカード</span>
+          <div style="font-size:0.8rem;margin-bottom:6px;">発表者: ＿＿＿＿＿＿　評価者: ＿＿＿＿＿＿</div>
+          <div style="font-size:0.8rem;font-weight:bold;color:#166534;margin-top:4px;">👍 すばらしいと感じた点：</div>
+          <div style="font-size:0.8rem;min-height:40px;"></div>
+          <div style="font-size:0.8rem;font-weight:bold;color:#92400e;margin-top:4px;">💡 アドバイス：</div>
+          <div style="font-size:0.8rem;min-height:40px;"></div>
+        </div>
+      </div>
+
+      <!-- カード 3 -->
+      <div class="card-box">
+        <div>
+          <span class="card-tag">✂️ 相互アドバイスカード</span>
+          <div style="font-size:0.8rem;margin-bottom:6px;">発表者: ＿＿＿＿＿＿　評価者: ＿＿＿＿＿＿</div>
+          <div style="font-size:0.8rem;font-weight:bold;color:#166534;margin-top:4px;">👍 すばらしいと感じた点：</div>
+          <div style="font-size:0.8rem;min-height:40px;"></div>
+          <div style="font-size:0.8rem;font-weight:bold;color:#92400e;margin-top:4px;">💡 アドバイス：</div>
+          <div style="font-size:0.8rem;min-height:40px;"></div>
+        </div>
+      </div>
+
+      <!-- カード 4 -->
+      <div class="card-box">
+        <div>
+          <span class="card-tag">✂️ 相互アドバイスカード</span>
+          <div style="font-size:0.8rem;margin-bottom:6px;">発表者: ＿＿＿＿＿＿　評価者: ＿＿＿＿＿＿</div>
+          <div style="font-size:0.8rem;font-weight:bold;color:#166534;margin-top:4px;">👍 すばらしいと感じた点：</div>
+          <div style="font-size:0.8rem;min-height:40px;"></div>
+          <div style="font-size:0.8rem;font-weight:bold;color:#92400e;margin-top:4px;">💡 アドバイス：</div>
+          <div style="font-size:0.8rem;min-height:40px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

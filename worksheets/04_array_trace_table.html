@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>📊 配列トレース表 (リスト・インデックス追跡)</title>
+  <style>
+    @page { size: A4 landscape; margin: 10mm; }
+    body { font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif; color: #1e293b; margin: 0; padding: 15px; background: #f8fafc; }
+    .print-container { max-width: 275mm; min-height: 180mm; background: white; margin: 0 auto; padding: 12mm; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); box-sizing: border-box; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #2563eb; padding-bottom: 6px; margin-bottom: 12px; }
+    .sheet-title { font-size: 1.4rem; font-weight: bold; color: #1e3a8a; }
+    .sheet-sub { font-size: 0.85rem; color: #64748b; }
+    .meta-info { display: flex; gap: 24px; margin-bottom: 12px; font-size: 0.9rem; }
+    .meta-field { border-bottom: 1px solid #94a3b8; padding: 2px 8px; flex-grow: 1; }
+    .array-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 0.85rem; text-align: center; }
+    .array-table th, .array-table td { border: 1px solid #94a3b8; padding: 6px; }
+    .array-table th { background: #f1f5f9; color: #1e40af; }
+    .sample-text { color: #2563eb; font-weight: bold; display: none; }
+    .show-sample .sample-text { display: inline-block; }
+    .control-panel { max-width: 275mm; margin: 0 auto 10px auto; display: flex; justify-content: space-between; align-items: center; background: #e0e7ff; padding: 8px 16px; border-radius: 8px; }
+    .btn-print { background: #2563eb; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print {
+      body { background: white; padding: 0; }
+      .print-container { border: none; box-shadow: none; padding: 0; width: 100%; }
+      .control-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="control-panel">
+    <label style="font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;color:#1e3a8a;">
+      <input type="checkbox" id="sampleToggle" onchange="document.body.classList.toggle('show-sample', this.checked)">
+      ✏️ 記入例（模範解答）を表示する
+    </label>
+    <button class="btn-print" onclick="window.print()">🖨️ A4横用紙に印刷する</button>
+  </div>
+
+  <div class="print-container">
+    <div class="sheet-header">
+      <div class="sheet-title">📊 配列トレース表 (リスト・インデックス構造追跡)</div>
+      <div class="sheet-sub">『ブロック学習帳』 ワークシート No.4</div>
+    </div>
+
+    <div class="meta-info">
+      <div>年・組・番号: <span class="meta-field"><span class="sample-text">中2-A 7番</span></span></div>
+      <div>氏名: <span class="meta-field"><span class="sample-text">高橋 健</span></span></div>
+      <div>配列（リスト）名: <span class="meta-field"><span class="sample-text">`点数リスト` (scores)</span></span></div>
+    </div>
+
+    <div style="font-size:0.85rem;font-weight:bold;color:#1e40af;margin-bottom:6px;">【1. 配列（リスト）メモリマップ】</div>
+    <table class="array-table">
+      <tr style="background:#e0e7ff;">
+        <th style="width:120px;">インデックス (添字)</th>
+        <th>0</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+      </tr>
+      <tr>
+        <td style="font-weight:bold;background:#f1f5f9;">格納されている値</td>
+        <td><span class="sample-text">85</span></td>
+        <td><span class="sample-text">70</span></td>
+        <td><span class="sample-text">92</span></td>
+        <td><span class="sample-text">64</span></td>
+        <td><span class="sample-text">78</span></td>
+      </tr>
+    </table>
+
+    <div style="font-size:0.85rem;font-weight:bold;color:#1e40af;margin:12px 0 6px 0;">【2. ループ変数 `i` による配列走査トレース】</div>
+    <table class="array-table">
+      <thead>
+        <tr style="background:#f1f5f9;">
+          <th style="width:60px;">巡回</th>
+          <th style="width:100px;">ループ変数 `i`</th>
+          <th style="width:140px;">参照要素 `点数リスト[i]`</th>
+          <th>条件判定 (例: 80点以上か？)</th>
+          <th>配列要素の変更・集計動作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1回目</td>
+          <td><span class="sample-text">0</span></td>
+          <td><span class="sample-text">点数リスト[0] = 85</span></td>
+          <td><span class="sample-text">85 &gt;= 80 (真)</span></td>
+          <td><span class="sample-text">合格カウント +1 (計1)</span></td>
+        </tr>
+        <tr>
+          <td>2回目</td>
+          <td><span class="sample-text">1</span></td>
+          <td><span class="sample-text">点数リスト[1] = 70</span></td>
+          <td><span class="sample-text">70 &gt;= 80 (偽)</span></td>
+          <td><span class="sample-text">変化なし (計1)</span></td>
+        </tr>
+        <tr>
+          <td>3回目</td>
+          <td><span class="sample-text">2</span></td>
+          <td><span class="sample-text">点数リスト[2] = 92</span></td>
+          <td><span class="sample-text">92 &gt;= 80 (真)</span></td>
+          <td><span class="sample-text">合格カウント +1 (計2)</span></td>
+        </tr>
+        <tr>
+          <td>4回目</td>
+          <td><span class="sample-text">3</span></td>
+          <td><span class="sample-text">点数リスト[3] = 64</span></td>
+          <td><span class="sample-text">64 &gt;= 80 (偽)</span></td>
+          <td><span class="sample-text">変化なし (計2)</span></td>
+        </tr>
+        <tr>
+          <td>5回目</td>
+          <td><span class="sample-text">4</span></td>
+          <td><span class="sample-text">点数リスト[4] = 78</span></td>
+          <td><span class="sample-text">78 &gt;= 80 (偽)</span></td>
+          <td><span class="sample-text">変化なし (計2)</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

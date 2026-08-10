@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>📜 DNCLトレースシート (共通テスト疑似言語対応)</title>
+  <style>
+    @page { size: A4 portrait; margin: 12mm; }
+    body { font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif; color: #1e293b; margin: 0; padding: 20px; background: #f8fafc; }
+    .print-container { max-width: 210mm; min-height: 270mm; background: white; margin: 0 auto; padding: 15mm; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); box-sizing: border-box; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #2563eb; padding-bottom: 6px; margin-bottom: 16px; }
+    .sheet-title { font-size: 1.4rem; font-weight: bold; color: #1e3a8a; }
+    .sheet-sub { font-size: 0.85rem; color: #64748b; }
+    .meta-info { display: flex; gap: 24px; margin-bottom: 16px; font-size: 0.95rem; }
+    .meta-field { border-bottom: 1px solid #94a3b8; padding: 2px 8px; flex-grow: 1; }
+    .dncl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .code-box { border: 1.5px solid #334155; border-radius: 6px; padding: 10px; background: #f8fafc; font-family: monospace; font-size: 0.85rem; line-height: 1.7; }
+    .dncl-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; text-align: center; }
+    .dncl-table th, .dncl-table td { border: 1px solid #94a3b8; padding: 6px; }
+    .dncl-table th { background: #f1f5f9; color: #1e40af; }
+    .sample-text { color: #2563eb; font-weight: bold; display: none; }
+    .show-sample .sample-text { display: inline-block; }
+    .control-panel { max-width: 210mm; margin: 0 auto 12px auto; display: flex; justify-content: space-between; align-items: center; background: #e0e7ff; padding: 10px 16px; border-radius: 8px; }
+    .btn-print { background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print {
+      body { background: white; padding: 0; }
+      .print-container { border: none; box-shadow: none; padding: 0; width: 100%; }
+      .control-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="control-panel">
+    <label style="font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;color:#1e3a8a;">
+      <input type="checkbox" id="sampleToggle" onchange="document.body.classList.toggle('show-sample', this.checked)">
+      ✏️ 記入例（模範解答）を表示する
+    </label>
+    <button class="btn-print" onclick="window.print()">🖨️ A4用紙に印刷する</button>
+  </div>
+
+  <div class="print-container">
+    <div class="sheet-header">
+      <div class="sheet-title">📜 DNCLトレースシート (大学入学共通テスト手順記述標準言語)</div>
+      <div class="sheet-sub">『ブロック学習帳』 ワークシート No.5</div>
+    </div>
+
+    <div class="meta-info">
+      <div>年・組・番号: <span class="meta-field"><span class="sample-text">高1-3 21番</span></span></div>
+      <div>氏名: <span class="meta-field"><span class="sample-text">中村 翼</span></span></div>
+      <div>対象テーマ: <span class="meta-field"><span class="sample-text">高校「情報Ⅰ」アルゴリズムとトレース</span></span></div>
+    </div>
+
+    <div class="dncl-grid">
+      <div class="code-box">
+        <div style="font-weight:bold;color:#1e40af;margin-bottom:6px;font-family:sans-serif;">【対象DNCLプログラム】</div>
+        01: `kazu = 5`<br>
+        02: `goukei = 0`<br>
+        03: `i を 1 から kazu まで 1 ずつ増やしながら繰り返す:`<br>
+        04: `  もし i % 2 == 1 ならば:`<br>
+        05: `    goukei = goukei + i`<br>
+        06: `  実行終了`<br>
+        07: `繰り返し終了`<br>
+        08: `goukei を表示する`
+      </div>
+
+      <div>
+        <div style="font-weight:bold;color:#1e40af;margin-bottom:6px;font-size:0.85rem;">【手計算トレース表】</div>
+        <table class="dncl-table">
+          <thead>
+            <tr>
+              <th>行</th>
+              <th>`i`</th>
+              <th>`goukei`</th>
+              <th>`i % 2 == 1`</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>01-02</td><td>-</td><td><span class="sample-text">0</span></td><td>-</td></tr>
+            <tr><td>03-05</td><td><span class="sample-text">1</span></td><td><span class="sample-text">1</span></td><td><span class="sample-text">真</span></td></tr>
+            <tr><td>03-04</td><td><span class="sample-text">2</span></td><td><span class="sample-text">1</span></td><td><span class="sample-text">偽</span></td></tr>
+            <tr><td>03-05</td><td><span class="sample-text">3</span></td><td><span class="sample-text">4 (1+3)</span></td><td><span class="sample-text">真</span></td></tr>
+            <tr><td>03-04</td><td><span class="sample-text">4</span></td><td><span class="sample-text">4</span></td><td><span class="sample-text">偽</span></td></tr>
+            <tr><td>03-05</td><td><span class="sample-text">5</span></td><td><span class="sample-text">9 (4+5)</span></td><td><span class="sample-text">真</span></td></tr>
+            <tr><td>08</td><td><span class="sample-text">6</span></td><td><span class="sample-text">9</span></td><td><span class="sample-text">出力: 9</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="border:1.5px solid #334155;border-radius:6px;padding:10px;height:90px;">
+      <div style="font-size:0.85rem;font-weight:bold;color:#1e40af;margin-bottom:4px;">【DNCLアルゴリズムの考察・解説】</div>
+      <div style="font-size:0.85rem;">
+        <span class="sample-text">1から5までの奇数（1, 3, 5）のみを判定して足し合わせるアルゴリズムです。最終的に `goukei` の値は 9 になります。</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

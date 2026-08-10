@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>📝 学習ふりかえりシート (資質・能力3柱自己評価)</title>
+  <style>
+    @page { size: A4 portrait; margin: 12mm; }
+    body { font-family: "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif; color: #1e293b; margin: 0; padding: 20px; background: #f8fafc; }
+    .print-container { max-width: 210mm; min-height: 270mm; background: white; margin: 0 auto; padding: 15mm; border: 1px solid #cbd5e1; box-shadow: 0 4px 6px rgba(0,0,0,0.05); box-sizing: border-box; }
+    .sheet-header { display: flex; justify-content: space-between; align-items: flex-end; border-bottom: 3px solid #2563eb; padding-bottom: 6px; margin-bottom: 16px; }
+    .sheet-title { font-size: 1.5rem; font-weight: bold; color: #1e3a8a; }
+    .sheet-sub { font-size: 0.85rem; color: #64748b; }
+    .meta-info { display: flex; gap: 24px; margin-bottom: 16px; font-size: 0.95rem; }
+    .meta-field { border-bottom: 1px solid #94a3b8; padding: 2px 8px; flex-grow: 1; }
+    .box { border: 1.5px solid #334155; border-radius: 6px; padding: 10px; background: #ffffff; margin-bottom: 12px; }
+    .box-title { font-size: 0.9rem; font-weight: bold; color: #1e40af; margin-bottom: 6px; }
+    .sample-text { color: #2563eb; font-weight: bold; display: none; }
+    .show-sample .sample-text { display: block; }
+    .show-sample .sample-placeholder { display: none; }
+    .check-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; font-size: 0.85rem; margin-top: 6px; }
+    .control-panel { max-width: 210mm; margin: 0 auto 12px auto; display: flex; justify-content: space-between; align-items: center; background: #e0e7ff; padding: 10px 16px; border-radius: 8px; }
+    .btn-print { background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    @media print {
+      body { background: white; padding: 0; }
+      .print-container { border: none; box-shadow: none; padding: 0; width: 100%; }
+      .control-panel { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="control-panel">
+    <label style="font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;color:#1e3a8a;">
+      <input type="checkbox" id="sampleToggle" onchange="document.body.classList.toggle('show-sample', this.checked)">
+      ✏️ 記入例（模範解答）を表示する
+    </label>
+    <button class="btn-print" onclick="window.print()">🖨️ A4用紙に印刷する</button>
+  </div>
+
+  <div class="print-container">
+    <div class="sheet-header">
+      <div class="sheet-title">📝 プログラミング学習 ふりかえりシート</div>
+      <div class="sheet-sub">『ブロック学習帳』 ワークシート No.8</div>
+    </div>
+
+    <div class="meta-info">
+      <div>年・組・番号: <span class="meta-field"><span class="sample-text">5年2組 8番</span></span></div>
+      <div>氏名: <span class="meta-field"><span class="sample-text">加藤 美咲</span></span></div>
+      <div>単元・テーマ: <span class="meta-field"><span class="sample-text">算数5年「正多角形とプログラミング」</span></span></div>
+    </div>
+
+    <!-- 知識・技能 -->
+    <div class="box">
+      <div class="box-title">【1. 知識及び技能（理解できたこと・操作できたこと）】</div>
+      <div class="check-grid">
+        <label><input type="checkbox" checked> 繰り返し処理の使い方が分かった</label>
+        <label><input type="checkbox" checked> 角度（外角）の概念を理解した</label>
+        <label><input type="checkbox" checked> 正確に図形を描くことができた</label>
+      </div>
+    </div>
+
+    <!-- 思考力・判断力・表現力 -->
+    <div class="box" style="min-height:90px;">
+      <div class="box-title">【2. 思考力、判断力、表現力等（プログラミング的思考・工夫したこと）】</div>
+      <div style="font-size:0.85rem;line-height:1.8;">
+        <span class="sample-placeholder" style="color:#94a3b8;">（図形を描くためにどのような計算や順序を考えたか）</span>
+        <div class="sample-text">
+          正六角形を描くために、「360度 ÷ 6 = 60度」と計算して曲がる角度ブロックを設定しました。ブロックを組み合わせる前にノートで作図の手順を書いて確かめました。
+        </div>
+      </div>
+    </div>
+
+    <!-- 学びに向かう力 -->
+    <div class="box" style="min-height:90px;">
+      <div class="box-title">【3. 学びに向かう力、人間性等（試行錯誤・今後の挑戦目標）】</div>
+      <div style="font-size:0.85rem;line-height:1.8;">
+        <span class="sample-placeholder" style="color:#94a3b8;">（失敗したときの直し方や、つぎに作ってみたいもの）</span>
+        <div class="sample-text">
+          最初は曲がる角度を内角の120度にしてしまい図形が崩れましたが、プログラムを1行ずつ見直して修正できました。次は正八角形や星型の図形を描いてみたいです。
+        </div>
+      </div>
+    </div>
+
+    <!-- 自己評価 -->
+    <div class="box" style="text-align:center;">
+      <div class="box-title" style="margin-bottom:8px;">【4. 本日の学習の自己評価】</div>
+      <div style="font-size:1.1rem;word-spacing:20px;">
+        😄 よくできた　🙂 できた　🤔 もうすこし
+      </div>
+    </div>
+  </div>
+</body>
+</html>
