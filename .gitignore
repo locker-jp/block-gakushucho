@@ -142,3 +142,15 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
 
+# 個人用：スマホ端末等からでも読めるよう、Claudeとの対話回答をテキスト出力する場所
+.htaccess
+answers/
+
+# 非公開開発資料（内部向けchangelog・開発方針メモ）とそのビルド出力
+build/devel/
+devel/
+
+# テスト実行環境（@playwright/testはグローバルインストール。node_modules/はそこへのシンボリックリンクのみ）
+node_modules/
+test-results/
+playwright-report/
