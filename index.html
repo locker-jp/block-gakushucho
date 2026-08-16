@@ -47,6 +47,19 @@ body {
   transition: background 0.2s;
 }
 .top-bar a:hover { background: rgba(255,255,255,0.35); }
+.top-bar-data-btn {
+  color: #93c5fd;
+  background: transparent;
+  border: 1px solid rgba(147,197,253,0.5);
+  text-decoration: none;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 6px;
+  transition: background 0.2s;
+}
+.top-bar-data-btn:hover { background: rgba(255,255,255,0.35); }
 
 .container {
   max-width: 1100px;
@@ -119,7 +132,98 @@ body {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* <table is="gakushu-table" class="gakushu-table"> : customized built-in element。
+   HTML5パーサーは tr/th/td を実際の <table> の中でないと静かに破棄するため、タグ自体は
+   <table> のまま維持し、Web Componentsの拡張機構(customized built-in)で共通化する。 */
+.gakushu-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  border: 1px solid #cbd5e1;
+  font-size: 0.9rem;
+}
+.gakushu-table > tr:first-child { background: #f1f5f9; font-weight: bold; }
+.gakushu-table > tr > th,
+.gakushu-table > tr > td {
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  text-align: left;
+}
+
+/* <gakushu-note kind="success|announcement|highlight|neutral"> : Web Component。色付き注記枠の共通化。 */
+gakushu-note {
+  display: block;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 20px 0;
+}
+gakushu-note[kind="success"] {
+  background: #f0fdf4;
+  border-left: 4px solid #16a34a;
+  border-radius: 0 8px 8px 0;
+}
+gakushu-note[kind="success"] h2,
+gakushu-note[kind="success"] h3 {
+  color: #15803d;
+  margin-top: 0;
+  font-size: 1.05rem;
+}
+gakushu-note[kind="announcement"] {
+  background: #fffbebf8;
+  border: 1px solid #fef3c7;
+  border-left: 4px solid #f59e0b;
+}
+gakushu-note[kind="highlight"] {
+  background: #ffffff;
+  border: 2px solid var(--primary-color);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin: 24px 0;
+}
+gakushu-note[kind="neutral"] {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  padding: 16px;
+  margin: 0;
+}
+/* <details class="choice-hint-details"> : ネイティブの開閉挙動を保つため要素はdetailsのまま、
+   色は gakushu-note[kind="success"] と同一パレットをクラスとして共有する。 */
+.choice-hint-details {
+  margin: 12px 0;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-left: 4px solid #16a34a;
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+
+/* <gakushu-tag kind="gray|blue|green|amber|indigo"> : Web Component。ポータルカード等のバッジ共通化。 */
+gakushu-tag {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+gakushu-tag[kind="gray"] { background: #e2e8f0; color: #334155; }
+gakushu-tag[kind="blue"] { background: #dbeafe; color: #1e40af; }
+gakushu-tag[kind="green"] { background: #dcfce7; color: #166534; }
+gakushu-tag[kind="amber"] { background: #fef3c7; color: #92400e; }
+gakushu-tag[kind="indigo"] { background: #e0e7ff; color: #3730a3; }
 </style>
+  <script>
+try {
+  // customized built-in element（<table is="gakushu-table">）。Safariは is= 拡張に未対応だが、
+  // 見た目はCSSクラス(.gakushu-table)側で担保しているため、未対応環境でも表は正しく表示される。
+  customElements.define('gakushu-table', class extends HTMLTableElement {}, { extends: 'table' });
+} catch (e) { /* is= 拡張未対応ブラウザ: CSSクラスによる見た目は引き続き有効 */ }
+customElements.define('gakushu-note', class extends HTMLElement {});
+customElements.define('gakushu-tag', class extends HTMLElement {});
+</script>
 </head>
 <body>
   <div class="top-bar">
@@ -129,11 +233,11 @@ body {
   <div class="container">
     <h1>小・中・高対応 プログラミング・情報教材 『ブロック学習帳』</h1>
     <p style="font-size:1.05rem;line-height:1.7;color:#334155;margin-bottom:20px;">
-      『ブロック学習帳』へようこそ！小学校の基礎から中学校技術科、高等学校「情報Ⅰ」まで、インストール不要・完全オフラインで安心してお使いいただける統合型プログラミング学習教材です。児童生徒が直感的に動かせるブロック操作から、共通テスト標準言語 (DNCL) や Python へのステップアップまでスムーズに接続します。
+      『ブロック学習帳』へようこそ！小学校の基礎から中学校技術科、高等学校「情報Ⅰ」まで、インストール不要・オフラインで安心してお使いいただける統合型プログラミング学習教材です。児童生徒が直感的に動かせるブロック操作から、共通テスト標準言語 (DNCL) や Python へのステップアップまでスムーズに接続します。
     </p>
 
     <!-- 🌟 最新のお知らせ・更新履歴インライン掲載 -->
-    <div style="background:#fffbebf8;border:1px solid #fef3c7;border-left:4px solid #f59e0b;padding:16px 20px;border-radius:8px;margin-bottom:24px;">
+    <gakushu-note kind="announcement" style="margin-bottom:24px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
         <h3 style="margin:0;color:#92400e;font-size:1.05rem;display:flex;align-items:center;gap:6px;">
           <span>🌟 最新のお知らせ・更新履歴 (News)</span>
@@ -143,31 +247,31 @@ body {
       
       <!-- レスポンシブ スクロールコンテナ -->
       <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-        <table style="width:100%;min-width:280px;border-collapse:collapse;font-size:0.875rem;background:white;border:1px solid #fed7aa;border-radius:6px;overflow:hidden;">
-          <tr style="background:#fff7ed;border-bottom:1px solid #fed7aa;">
-            <th style="padding:8px 12px;text-align:left;width:120px;">日付</th>
-            <th style="padding:8px 12px;text-align:left;">区分</th>
-          </tr>
-          <tr style="border-bottom:1px solid #ffedd5;">
-            <td style="padding:8px 12px;font-weight:bold;color:#1e293b;">2026/07/30</td>
-            <td style="padding:8px 12px;font-weight:bold;color:#ea580c;">プロジェクト開始</td>
-          </tr>
-          <tr style="border-bottom:1px solid #ffedd5;">
-            <td style="padding:8px 12px;color:#64748b;">2026/--/--</td>
-            <td style="padding:8px 12px;font-weight:bold;color:#d97706;">クローズドβテスト開始</td>
+        <table is="gakushu-table" class="gakushu-table" role="table" style="min-width:280px;">
+          <tr>
+            <th style="width:120px;">日付</th>
+            <th>区分</th>
           </tr>
           <tr>
-            <td style="padding:8px 12px;color:#64748b;">2026/--/--</td>
-            <td style="padding:8px 12px;font-weight:bold;color:#2563eb;">オープンβテスト開始</td>
+            <td style="font-weight:bold;color:#1e293b;">2026/07/30</td>
+            <td style="font-weight:bold;color:#ea580c;">プロジェクト開始</td>
+          </tr>
+          <tr>
+            <td style="color:#64748b;">2026/--/--</td>
+            <td style="font-weight:bold;color:#d97706;">クローズドβテスト開始</td>
+          </tr>
+          <tr>
+            <td style="color:#64748b;">2026/--/--</td>
+            <td style="font-weight:bold;color:#2563eb;">オープンβテスト開始</td>
           </tr>
         </table>
       </div>
       <p style="margin:8px 0 0 0;font-size:0.8rem;color:#b45309;line-height:1.5;">
         ※ 変更内容の詳細はオープンβテスト開始以降に記載します。
       </p>
-    </div>
+    </gakushu-note>
 
-    <div style="background:#ffffff;border:2px solid var(--primary-color);padding:24px;border-radius:12px;margin:24px 0;box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+    <gakushu-note kind="highlight">
       <h3 style="margin-top:0;color:var(--primary-color);display:flex;align-items:center;gap:8px;">
         <span>📦 オフライン設置用 一括配布パッケージ ＆ セットアップ手順</span>
       </h3>
@@ -175,13 +279,13 @@ body {
         校内Webサーバーや端末のローカル環境へ導入・設置するための全ファイルを含むZIPパッケージです。
       </p>
 
-      <div style="background:#f8fafc;border:1px solid #cbd5e1;padding:16px;border-radius:8px;margin-bottom:16px;font-size:0.9rem;">
+      <gakushu-note kind="neutral" style="margin-bottom:16px;font-size:0.9rem;">
         <div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">💡 簡単・安心の2ステップ設置手順：</div>
         <ol style="margin:0;padding-left:20px;line-height:1.7;">
           <li><strong>① 指導者用フォルダの準備:</strong> <code>指導者用</code> フォルダを作成し、<code>gakushucho.zip</code> を全解凍します（全指導案付きで起動）。</li>
-          <li><strong>② 学習者用フォルダの準備:</strong> <code>学習者用</code> フォルダを作成して解凍後、<code>js/teach.js</code> を削除して生徒端末へ配付します（指導案完全非表示で安心起動）。</li>
+          <li><strong>② 学習者用フォルダの準備:</strong> <code>学習者用</code> フォルダを作成して解凍後、<code>js/teach.js</code> を削除して生徒端末へ配付します（指導案非表示で安心起動）。</li>
         </ol>
-      </div>
+      </gakushu-note>
 
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
         <a href="gakushucho.zip" style="display:inline-flex;align-items:center;gap:6px;background:var(--primary-color);color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;box-shadow:0 4px 12px rgba(37,99,235,0.25);">
@@ -191,43 +295,43 @@ body {
           <span>📖 詳細な導入・セットアップガイドを見る</span>
         </a>
       </div>
-    </div>
+    </gakushu-note>
 
     <div class="card-grid" style="margin-top:24px;">
       <a class="card" href="gakushucho.html?teach=0">
-        <div class="tag" style="background:#dbeafe;color:#1e40af;">学習者用</div>
+        <gakushu-tag kind="blue">学習者用</gakushu-tag>
         <div class="card-title">📘 ブロック学習帳</div>
-        <div class="card-desc">小学校・中学校・高校生が直接ブロックを組み立てて直感的に学ぶ学習ツール（全8章26節）</div>
+        <div class="card-desc">小学校・中学校・高校生が直接ブロックを組み立てて直感的に学ぶ学習ツール（全8章24節）</div>
       </a>
       <a class="card" href="gakushucho.html?teach=1">
-        <div class="tag" style="background:#dcfce7;color:#166534;">指導者用</div>
+        <gakushu-tag kind="green">指導者用</gakushu-tag>
         <div class="card-title">📗 指導用学習帳</div>
         <div class="card-desc">全8章の学習帳、指導者用解説、統合ガイドライン、詳細指導案を網羅した指導者用ツール</div>
       </a>
       <a class="card" href="gakushucho.html?teach=1#setup">
-        <div class="tag" style="background:#fef3c7;color:#92400e;">巻末付録①</div>
+        <gakushu-tag kind="amber">巻末付録①</gakushu-tag>
         <div class="card-title">📦 オフライン設置・端末別セットアップガイド</div>
-        <div class="card-desc">非技術者の指導者でも迷わない、指導者用端末と学習者用端末（<code>js/teach.js</code> 削除）のセットアップ解説</div>
+        <div class="card-desc">非技術者の指導者でも迷わない、指導者用端末と学習者用端末（<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">js/teach.js</code> 削除）のセットアップ解説</div>
       </a>
       <a class="card" href="gakushucho.html?teach=1#overview">
-        <div class="tag" style="background:#e0e7ff;color:#3730a3;">巻末付録②</div>
+        <gakushu-tag kind="indigo">巻末付録②</gakushu-tag>
         <div class="card-title">📖 教材概要 ＆ ガイドライン</div>
         <div class="card-desc">『ブロック学習帳』の指導理念、教材の特長、小中高のステップアップおよび活用方針</div>
       </a>
       <a class="card" href="gakushucho.html?teach=1#news">
-        <div class="tag" style="background:#fef3c7;color:#92400e;">巻末付録③</div>
+        <gakushu-tag kind="amber">巻末付録③</gakushu-tag>
         <div class="card-title">🌟 最新のお知らせ ＆ 更新履歴</div>
         <div class="card-desc">『ブロック学習帳』の公開用更新履歴および今後の開発・公開ロードマップ</div>
       </a>
       <a class="card" href="gakushucho.html?teach=1#teacher_appendix">
-        <div class="tag" style="background:#dcfce7;color:#166534;">巻末付録④</div>
+        <gakushu-tag kind="green">巻末付録④</gakushu-tag>
         <div class="card-title">📎 観点別評価規準 ＆ 授業展開表</div>
         <div class="card-desc">小中高の学習指導要領に対応した観点別評価規準および標準的な授業展開モデル</div>
       </a>
       <a class="card" href="gakushucho.html?teach=1#lesson_plan">
-        <div class="tag" style="background:#fef3c7;color:#92400e;">巻末付録⑤</div>
+        <gakushu-tag kind="amber">巻末付録⑤</gakushu-tag>
         <div class="card-title">📋 全8章 授業詳細指導案・評価規準一覧</div>
-        <div class="card-desc">全8章26節の授業フロー、発問・口頭指導メッセージ、観点別評価規準を節ごとに掲載</div>
+        <div class="card-desc">全8章24節の授業フロー、発問・口頭指導メッセージ、観点別評価規準を節ごとに掲載</div>
       </a>
     </div>
   </div>

@@ -1,11 +1,11 @@
-/* 
- * DNCL Code Generator for Gakushucho (共通テスト手順記述標準言語 100%完全対応エンジン)
- * 
- * 【参照・謝意および注意事項】
- * 本モジュールは、大阪電気通信大学 兼宗進 教授・兼宗研究室（どん栗プロジェクト / https://don-guri.net/）が
- * 開発・公表されている共通テスト手順記述標準言語 (DNCL / DNCL2) 仕様および「どんブロック」の表記規則を参考に、
- * 『ブロック学習帳』プロジェクトにおいて独自に設計・完全実装したコード生成モジュールです。
- * どんブロック本家のソースコードを直接内包・改変したものではありません。
+/*
+ * DNCL Code Generator for Gakushucho (共通テスト手順記述標準言語 対応・独自実装エンジン)
+ *
+ * 【参照および注意事項】
+ * 本モジュールは、独立行政法人大学入試センターが公表している共通テスト手順記述標準言語
+ * (DNCL / DNCL2) の仕様を参考に、『ブロック学習帳』プロジェクトにおいて独自に設計・実装した
+ * コード生成モジュールです。特定の第三者製ツール・ソフトウェアのソースコードを
+ * 直接内包・改変したものではありません。
  */
 (function() {
   if (typeof Blockly === 'undefined') return;
@@ -173,6 +173,12 @@
     return list + '[' + at + '] = ' + value + '\n';
   };
 
+  // 配列の要素数 (DNCL標準: 配列の要素数)
+  Blockly.DNCL['lists_length'] = function(block) {
+    var list = Blockly.DNCL.valueToCode(block, 'VALUE', Blockly.DNCL.ORDER_NONE) || '配列';
+    return [list + 'の要素数', Blockly.DNCL.ORDER_ATOMIC];
+  };
+
   // -------------------------------------------------------------
   // 3. 関数・手続き（モジュール化：高校「情報Ⅰ」対応）
   // -------------------------------------------------------------
@@ -233,13 +239,18 @@
   // 4. 定型アルゴリズム（探索・整列）
   // -------------------------------------------------------------
   Blockly.DNCL['algo_linear_search'] = function(block) {
-    return '線形探索(配列, 目的の値) を実行する\n';
+    var list = Blockly.DNCL.valueToCode(block, 'LIST', Blockly.DNCL.ORDER_NONE) || '配列';
+    var target = Blockly.DNCL.valueToCode(block, 'TARGET', Blockly.DNCL.ORDER_NONE) || '探す値';
+    return ['線形探索(' + list + ', ' + target + ')', Blockly.DNCL.ORDER_ATOMIC];
   };
   Blockly.DNCL['algo_binary_search'] = function(block) {
-    return '二分探索(ソート済み配列, 目的の値) を実行する\n';
+    var list = Blockly.DNCL.valueToCode(block, 'LIST', Blockly.DNCL.ORDER_NONE) || '整列済み配列';
+    var target = Blockly.DNCL.valueToCode(block, 'TARGET', Blockly.DNCL.ORDER_NONE) || '探す値';
+    return ['二分探索(' + list + ', ' + target + ')', Blockly.DNCL.ORDER_ATOMIC];
   };
   Blockly.DNCL['algo_bubble_sort'] = function(block) {
-    return 'バブルソート(配列) を実行する\n';
+    var list = Blockly.DNCL.valueToCode(block, 'LIST', Blockly.DNCL.ORDER_NONE) || '配列';
+    return ['バブルソート(' + list + ')', Blockly.DNCL.ORDER_ATOMIC];
   };
 
   // -------------------------------------------------------------
@@ -282,6 +293,15 @@
     var mode = block.getFieldValue('OP') || 'EQ';
     var opMap = { EQ: '==', NEQ: '!=', LT: '<', LTE: '<=', GT: '>', GTE: '>=' };
     var op = opMap[mode] || '==';
+    var argument0 = Blockly.DNCL.valueToCode(block, 'A', Blockly.DNCL.ORDER_NONE) || '0';
+    var argument1 = Blockly.DNCL.valueToCode(block, 'B', Blockly.DNCL.ORDER_NONE) || '0';
+    return [argument0 + ' ' + op + ' ' + argument1, Blockly.DNCL.ORDER_ATOMIC];
+  };
+
+  Blockly.DNCL['math_arithmetic'] = function(block) {
+    var mode = block.getFieldValue('OP') || 'ADD';
+    var opMap = { ADD: '+', MINUS: '-', MULTIPLY: '×', DIVIDE: '÷', POWER: '^' };
+    var op = opMap[mode] || '+';
     var argument0 = Blockly.DNCL.valueToCode(block, 'A', Blockly.DNCL.ORDER_NONE) || '0';
     var argument1 = Blockly.DNCL.valueToCode(block, 'B', Blockly.DNCL.ORDER_NONE) || '0';
     return [argument0 + ' ' + op + ' ' + argument1, Blockly.DNCL.ORDER_ATOMIC];

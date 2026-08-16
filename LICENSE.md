@@ -33,15 +33,16 @@ SOFTWARE.
 
 - **コンポーネント名:** Google Blockly
 - **公式配布サイト:** Google Developers / GitHub (google/blockly)
+  - ※2025年11月10日付でBlocklyプロジェクトの運営元はGoogleからRaspberry Pi Foundationに移管されており、現在の公式サイトは [docs.blockly.com](https://docs.blockly.com)、公式GitHubは [github.com/RaspberryPiFoundation/blockly](https://github.com/RaspberryPiFoundation/blockly) です（本項目に記載の配布物自体は移管前と同一の公式リリースビルドのため、下記URL・入手経路の記載は変更していません）。
 - **公式URL:** [https://developers.google.com/blockly](https://developers.google.com/blockly) / [https://github.com/google/blockly](https://github.com/google/blockly)
-- **入手バージョン:** Google Blockly Core v9.x / v10.x 相当
+- **入手バージョン:** Google Blockly Core v13.2.1（npm公式パッケージ配布物のバージョン文字列を実ファイルから確認済み）
 - **内包ファイル:**
   - `js/blockly_compressed.js`
   - `js/blocks_compressed.js`
   - `js/javascript_compressed.js`
   - `js/python_compressed.js`
-  - `js/msg/js/ja.js`
-- **改変の有無:** なし (Google公式リリースビルドをそのままローカルに配置内包)
+  - `js/msg/ja.js`
+- **改変の有無:** `js/python_compressed.js` のみ、末尾に本プロジェクト独自のカスタムブロック（`sound_play`/`say_text`/`led_on`等）向けPython変換関数、および `controls_if`/`controls_ifelse` の else/elif生成を補う追記コードあり（ファイル内に "🌟 Blockly.Python 拡張修復" というコメントで改変箇所を明示）。それ以外の内包ファイルは Google公式リリースビルドをそのままローカルに配置内包しており、改変なし。
 - **ライセンス:** Apache License 2.0
 
 **Copyright 2012 Google LLC**
@@ -60,31 +61,10 @@ limitations under the License.
 
 ---
 
-## 3. DNCL言語仕様および「どんブロック」表記法への参照 (Specification Reference)
+## 3. DNCL言語仕様への参照 (Specification Reference)
 
-- **参照仕様・表記名:** 共通テスト手順記述標準言語 (DNCL / DNCL2) 仕様および「どんブロック (DON-BLOCK)」変換表記法
-- **仕様開発元・著者:** 大阪電気通信大学 兼宗進 教授・兼宗研究室（どん栗プロジェクト / DON-BLOCK）
-- **公式サイト・一次情報源:** どん栗プロジェクト [https://don-guri.net/](https://don-guri.net/)
+- **参照仕様・表記名:** 共通テスト手順記述標準言語 (DNCL / DNCL2)
+- **仕様公表元・一次情報源:** 独立行政法人大学入試センター（大学入学共通テストにおいて公表している手順記述標準言語の仕様）
 - **該当ファイル:** `js/dncl_compressed.js`
-- **実装の態様と著作権に関する注意事項:**  
-  `js/dncl_compressed.js` は、どんブロック本家のソースコードを直接コピー・改変して内包したものではなく、大阪電気通信大学 兼宗進 教授・兼宗研究室（どん栗プロジェクト）が公表されている公式DNCL文法・表記仕様を参考に、『ブロック学習帳』開発プロジェクトにおいて**完全独自に設計・実装したDNCLコード生成モジュール**です。先方開発元への誤解やご迷惑を回避するため、ここに仕様の出典および深甚なる謝意を明記いたします。
-
-**Copyright (c) Susumu Kanemune et al. / 大阪電気通信大学 どん栗プロジェクト (DNCL Specification Reference)**
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+- **実装の態様に関する注意事項:**  
+  `js/dncl_compressed.js` は、大学入試センターが公表しているDNCLの文法・表記仕様を参考に、『ブロック学習帳』開発プロジェクトにおいて独自に設計・実装したコード生成モジュールです。特定の第三者製ツール・ソフトウェアのソースコードや解説を参照・移植したものではありません。本ファイルの著作権の扱いは、上記第1項（本体のMITライセンス）に含まれます。

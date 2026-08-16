@@ -1,0 +1,9 @@
+{
+  "name": "block-gakushucho",
+  "private": true,
+  "description": "『ブロック学習帳』開発用ツール（ビルドスクリプト本体はNode標準ライブラリのみで依存無し。@playwright/test・jsdomはグローバルインストールし `npm link` でプロジェクトに接続する運用。 sudo npm install -g @playwright/test jsdom && npm link @playwright/test jsdom）",
+  "scripts": {
+    "build": "node build/build_all.js",
+    "test": "node --test tests/build-logic.spec.js tests/dead-links.spec.js tests/dncl-codegen.spec.js && playwright test --config=tests/playwright.config.js"
+  }
+}

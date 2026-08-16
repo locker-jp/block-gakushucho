@@ -151,6 +151,5 @@ build/devel/
 devel/
 
 # テスト実行環境（@playwright/testはグローバルインストール。node_modules/はそこへのシンボリックリンクのみ）
-node_modules/
 test-results/
 playwright-report/
