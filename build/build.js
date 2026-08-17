@@ -1277,7 +1277,7 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
           '              <button class="lang-tab" data-lang="js" style="background:#334155;color:#cbd5e1;border:none;padding:2px 8px;border-radius:4px;font-size:0.75rem;cursor:pointer;">⚡ JS</button>\\n' +
           '              <button class="btn-toggle-code" style="margin-left:auto;background:#334155;color:#cbd5e1;border:none;padding:2px 8px;border-radius:4px;font-size:0.75rem;cursor:pointer;" title="コード変換枠の表示/非表示切り替え">👁️ コードを隠す</button>\\n' +
           '            </div>\\n' +
-          '            <pre class="code-preview-content" style="margin:0;color:#38bdf8;font-family:monospace;white-space:pre-wrap;word-break:break-all;max-height:110px;overflow-y:auto;">// DNCL (共通テスト手順記述) リアルタイム変換コード</pre>\\n' +
+          '            <pre class="code-preview-content" style="margin:0;color:#38bdf8;font-family:monospace;white-space:pre-wrap;word-break:break-all;max-height:110px;overflow-y:auto;">// DNCL リアルタイム変換コード</pre>\\n' +
           '          </div>\\n' +
           '        </div>\\n' +
           '      </div>';
@@ -1623,7 +1623,7 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
             if (typeof Blockly !== 'undefined' && Blockly.DNCL && typeof Blockly.DNCL.workspaceToCode === 'function') {
               code = Blockly.DNCL.workspaceToCode(ws);
             }
-            if (!code || !code.trim()) code = "// ブロックを配置すると、ここにリアルタイムで DNCL (共通テスト手順記述) が自動生成されます";
+            if (!code || !code.trim()) code = "// ブロックを配置すると、ここにリアルタイムで DNCL コードが自動生成されます";
           } else {
             const jsG = getJsGen();
             if (jsG && typeof jsG.workspaceToCode === 'function') {
@@ -2544,8 +2544,8 @@ const portalHtml = `<!DOCTYPE html>
       <gakushu-note kind="neutral" style="margin-bottom:16px;font-size:0.9rem;">
         <div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">💡 簡単・安心の2ステップ設置手順：</div>
         <ol style="margin:0;padding-left:20px;line-height:1.7;">
-          <li><strong>① 指導者用フォルダの準備:</strong> <code>指導者用</code> フォルダを作成し、<code>gakushucho.zip</code> を全解凍します（全指導案付きで起動）。</li>
-          <li><strong>② 学習者用フォルダの準備:</strong> <code>学習者用</code> フォルダを作成して解凍後、<code>js/teach.js</code> を削除して生徒端末へ配付します（指導案非表示で安心起動）。</li>
+          <li><strong>① 指導者用フォルダの準備:</strong> <code>指導者用</code> フォルダを作成し、<code>gakushucho.zip</code> を全展開します（全指導案付きで起動）。</li>
+          <li><strong>② 学習者用フォルダの準備:</strong> <code>学習者用</code> フォルダを作成して展開後、<code>js/teach.js</code> を削除して生徒端末へ配付します（指導案非表示で安心起動）。</li>
         </ol>
       </gakushu-note>
 
@@ -2588,6 +2588,14 @@ const portalHtml = `<!DOCTYPE html>
 </html>`;
 fs.writeFileSync(path.join(rootDir, 'index.html'), portalHtml, 'utf-8');
 console.log('  Generated: ' + path.relative(rootDir, path.join(rootDir, 'index.html')));
+
+// README.md 自動生成（build/README.md を正本とし、{{CH}}/{{SEC}} を実際の章数・節数に置換）
+console.log('\n=== Building README.md ===');
+const readmeSrc = fs.readFileSync(path.join(rootDir, 'build', 'README.md'), 'utf-8');
+const readmeOut = '<!-- 自動生成ファイル: build/README.md を編集後 node build/build_all.js を実行してください。直接編集しないでください。 -->\n'
+  + fillCardPlaceholders(readmeSrc, contentStats);
+fs.writeFileSync(path.join(rootDir, 'README.md'), readmeOut, 'utf-8');
+console.log('  Generated: README.md (from build/README.md)');
 
 // gakushucho.zip 自動生成
 console.log('\n=== Creating Public Package gakushucho.zip ===');

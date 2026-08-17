@@ -2317,22 +2317,22 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
 <p>学校現場で設置を行う際は、あらかじめPC上に <strong>「指導者用」</strong> と <strong>「学習者用」</strong> の <strong>2 つのフォルダ</strong> を作成し、<strong>①指導者用 ➔ ②学習者用</strong> の順番で作業を進めるのが最も分かりやすく安心です。</p>
 <p>```</p>
 <p>📁 作業PC (またはデスクトップ)</p>
-<p> ├── 📁 指導者用  <-- 解凍してそのまま配置 (全指導案・解説付き)</p>
-<p> └── 📁 学習者用  <-- 解凍後、js/teach.js を1つ削除 (生徒安心モード)</p>
+<p> ├── 📁 指導者用  <-- 展開してそのまま配置 (全指導案・解説付き)</p>
+<p> └── 📁 学習者用  <-- 展開後、js/teach.js を1つ削除 (生徒安心モード)</p>
 <p>```</p>
 <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">
 <h2>📗 ステップ1：指導者用端末（教員PC）のセットアップ手順</h2>
 <p>まず、先生ご自身が授業準備や授業中に使用するPC・タブレットのセットアップを行います。</p>
 <li>配布パッケージ <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">gakushucho.zip</code></strong> をダウンロードします。</li>
 <li>PCのデスクトップ等に <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">指導者用</code></strong> という名前の新しいフォルダを作成します。</li>
-<li>ダウンロードした <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">gakushucho.zip</code></strong> を、作成した <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">指導者用</code></strong> フォルダの中に全展開（解凍）します。</li>
+<li>ダウンロードした <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">gakushucho.zip</code></strong> を、作成した <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">指導者用</code></strong> フォルダの中に全展開します。</li>
 <li>フォルダ内の <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">index.html</code></strong>（または <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">gakushucho.html</code>）を開きます。</li>
 <p>   👉 これだけで、全8章の指導用解説や口頭発問メッセージが表示される<strong>【指導者モード】</strong>でご利用いただけます！</p>
 <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">
 <h2>📱 ステップ2：学習者用端末（児童・生徒PC）のセットアップ手順</h2>
 <p>次に、児童・生徒が使用するPCやタブレットのセットアップを行います。生徒が誤って指導案や評価規準を見ることがないよう、以下の順で作業します。</p>
 <li>PCのデスクトップ等に <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">学習者用</code></strong> という名前の新しいフォルダを作成します。</li>
-<li><strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">gakushucho.zip</code></strong> を、作成した <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">学習者用</code></strong> フォルダの中に全展開（解凍）します。</li>
+<li><strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">gakushucho.zip</code></strong> を、作成した <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">学習者用</code></strong> フォルダの中に全展開します。</li>
 <li><strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">学習者用</code> フォルダの中にある <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">js</code> フォルダを開き、<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">teach.js</code> というファイルを削除（ゴミ箱へ移動）します。</strong></li>
 <li>フォルダ内の <strong><code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">index.html</code></strong>（または <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">gakushucho.html</code>）を開きます。</li>
 <p>   👉 指導案や解説が非表示になった<strong>【学習者モード】</strong>で安全に起動します！</p>
@@ -2545,7 +2545,7 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
   <tr>
     <td>5</td>
     <td><strong>📜 DNCLトレースシート</strong></td>
-    <td>第6章（大学入学共通テスト手順記述・アルゴリズム）</td>
+    <td>第6章（DNCL・アルゴリズム）</td>
     <td><a href="worksheets/05_dncl_trace_sheet.html" style="color:#2563eb;text-decoration:underline;" target="_blank">📜 単体帳票を開く</a></td>
   </tr>
   <tr>
@@ -3875,7 +3875,7 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
           '              <button class="lang-tab" data-lang="js" style="background:#334155;color:#cbd5e1;border:none;padding:2px 8px;border-radius:4px;font-size:0.75rem;cursor:pointer;">⚡ JS</button>\n' +
           '              <button class="btn-toggle-code" style="margin-left:auto;background:#334155;color:#cbd5e1;border:none;padding:2px 8px;border-radius:4px;font-size:0.75rem;cursor:pointer;" title="コード変換枠の表示/非表示切り替え">👁️ コードを隠す</button>\n' +
           '            </div>\n' +
-          '            <pre class="code-preview-content" style="margin:0;color:#38bdf8;font-family:monospace;white-space:pre-wrap;word-break:break-all;max-height:110px;overflow-y:auto;">// DNCL (共通テスト手順記述) リアルタイム変換コード</pre>\n' +
+          '            <pre class="code-preview-content" style="margin:0;color:#38bdf8;font-family:monospace;white-space:pre-wrap;word-break:break-all;max-height:110px;overflow-y:auto;">// DNCL リアルタイム変換コード</pre>\n' +
           '          </div>\n' +
           '        </div>\n' +
           '      </div>';
@@ -4221,7 +4221,7 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
             if (typeof Blockly !== 'undefined' && Blockly.DNCL && typeof Blockly.DNCL.workspaceToCode === 'function') {
               code = Blockly.DNCL.workspaceToCode(ws);
             }
-            if (!code || !code.trim()) code = "// ブロックを配置すると、ここにリアルタイムで DNCL (共通テスト手順記述) が自動生成されます";
+            if (!code || !code.trim()) code = "// ブロックを配置すると、ここにリアルタイムで DNCL コードが自動生成されます";
           } else {
             const jsG = getJsGen();
             if (jsG && typeof jsG.workspaceToCode === 'function') {

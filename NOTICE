@@ -1,0 +1,46 @@
+# 『ブロック学習帳』 サードパーティ・コンポーネント表記 (NOTICE)
+
+本ファイルは、『ブロック学習帳』(Gakushucho) に含まれる第三者コンポーネントの権利表記・参照情報をまとめたものです。
+本体のライセンス条件（The MIT License）は LICENSE をご参照ください。
+
+---
+
+## Google Blockly モジュール (Third-Party Component)
+
+- **コンポーネント名:** Google Blockly
+- **公式配布サイト:** Google Developers / GitHub (google/blockly)
+  ※2025年11月10日付でBlocklyプロジェクトの運営元はGoogleからRaspberry Pi Foundationに移管されており、現在の公式サイトは docs.blockly.com、公式GitHubは github.com/RaspberryPiFoundation/blockly です（本項目に記載の配布物自体は移管前と同一の公式リリースビルドのため、下記URL・入手経路の記載は変更していません）。
+- **公式URL:** https://developers.google.com/blockly / https://github.com/google/blockly
+- **入手バージョン:** Google Blockly Core v13.2.1（npm公式パッケージ配布物のバージョン文字列を実ファイルから確認済み）
+- **内包ファイル:**
+  - `js/blockly_compressed.js`
+  - `js/blocks_compressed.js`
+  - `js/javascript_compressed.js`
+  - `js/python_compressed.js`
+  - `js/msg/ja.js`
+- **改変の有無:** なし。上記ファイルはいずれも Google公式リリースビルドをそのままローカルに配置内包しています。独自カスタムブロック（`sound_play`/`say_text`/`led_on`等）のPython/JavaScriptコード生成は、これらのファイルを直接改変するのではなく、`gakushucho.html`側の独自スクリプトから `Blockly.Python`/`Blockly.JavaScript` に対して実行時に追加登録する方式で実装しています。
+- **ライセンス:** Apache License 2.0
+
+**Copyright 2012 Google LLC**
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+---
+
+## 共通テスト用プログラム表記への参照 (Specification Reference)
+
+- **参照仕様:** 共通テスト用プログラム表記（独立行政法人大学入試センターが大学入学共通テストにおいて公表しているプログラム表記の仕様。世間の慣例に従い、本書内では略称として「DNCL」の呼称を使用しています）
+- **仕様公表元・一次情報源:** 独立行政法人大学入試センター
+- **該当ファイル:** `js/dncl_compressed.js`
+- **参考文献:**
+  `js/dncl_compressed.js` は、大学入試センターが公表している共通テスト用プログラム表記の文法・仕様を参考に、『ブロック学習帳』開発プロジェクトにおいて独自に設計・実装したコード生成モジュールです。本ファイルの著作権の扱いは、LICENSE（本体のMITライセンス）に含まれます。

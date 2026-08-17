@@ -77,7 +77,7 @@ test('外部リンク: 独自コンテンツ（LICENSE/README/正本md/build.js/
   // URL文字列そのものを記録として書き残す運用のため、含めると自分自身の記録に
   // よって永久に失敗し続けてしまう（自己参照的な誤検知）。
   const files = [
-    'LICENSE', 'LICENSE.md', 'README.md',
+    'LICENSE', 'NOTICE', 'README.md',
     'build/gakushucho.md',
     'build/build.js', 'js/dncl_compressed.js',
   ];
