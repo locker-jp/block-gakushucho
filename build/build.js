@@ -393,7 +393,10 @@ function inlineFormatting(text, relPrefix = '') {
   return text
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    .replace(/`([^`]+)`/g, '<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">$1</code>')
+    .replace(/`([^`]+)`/g, (m, code) => {
+      const escaped = code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return `<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">${escaped}</code>`;
+    })
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (m, label, url) => {
       let cleanUrl = url;
       if (cleanUrl.includes('worksheets/')) {

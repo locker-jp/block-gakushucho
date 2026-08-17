@@ -15,7 +15,6 @@
   - `#lesson_plan` : 巻末付録⑤ 📋 全8章 授業詳細指導案・評価規準一覧
 - **`worksheets/`** : A4用紙印刷対応のWeb帳票ワークシート全8種ライブラリ (単体閲覧・配布・思考用トグル対応)
 - **`build/`** : 正本マスターソース (`build/gakushucho.md`) および自動コンパイルビルドスクリプト (`build.js`, `build_all.js`)
-- **`devel/`** : 内部開発者・管理者専用の非公開資料置き場 (配布パッケージ `gakushucho.zip` には含まれません)
 
 ---
 
@@ -39,4 +38,4 @@ node build/build_all.js
 ## 📜 ライセンス表記 (LICENSE)
 
 本ソフトウェアは **The MIT License** のもとで公開されています。  
-サードパーティコンポーネント (Google Blockly: Apache 2.0 / 独立行政法人大学入試センター DNCL仕様参照) の権利表記を含む詳細なライセンス情報は [`LICENSE.md`](./LICENSE.md) および [`LICENSE`](./LICENSE) をご参照ください。
+サードパーティコンポーネント (Google Blockly: Apache 2.0) の権利表記を含む詳細なライセンス情報は [`LICENSE.md`](./LICENSE.md) および [`LICENSE`](./LICENSE) をご参照ください。

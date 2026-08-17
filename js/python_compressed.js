@@ -161,67 +161,6 @@ def ${b.FUNCTION_NAME_PLACEHOLDER_}(my_list, type, reverse):
 $r.pythonGenerator=Yr;$.__chunk_python=$r;
 $.__chunk_python.__namespace__=$;
 
-// 🌟 Blockly.Python 拡張修復：controls_if / controls_ifelse の else/elif 節完全生成
-if (typeof Blockly !== 'undefined' && Blockly.Python) {
-  Blockly.Python['controls_if'] = Blockly.Python['controls_ifelse'] = function(block) {
-    var n = 0;
-    var code = '', branchCode, conditionCode;
-    do {
-      conditionCode = Blockly.Python.valueToCode(block, 'IF' + n, Blockly.Python.ORDER_NONE) || 'False';
-      branchCode = Blockly.Python.statementToCode(block, 'DO' + n) || Blockly.Python.PASS;
-      if (n === 0) {
-        code += 'if ' + conditionCode + ':\n' + branchCode;
-      } else {
-        code += 'elif ' + conditionCode + ':\n' + branchCode;
-      }
-      n++;
-    } while (block.getInput('IF' + n));
-
-    if (block.getInput('ELSE') || block.elseCount_) {
-      branchCode = Blockly.Python.statementToCode(block, 'ELSE') || Blockly.Python.PASS;
-      code += 'else:\n' + branchCode;
-    }
-    return code;
-  };
-
-  // 独自カスタムブロック (全14種) Python 変換補強
-  Blockly.Python['sound_play'] = function(block) { return "play_sound()\n"; };
-  Blockly.Python['say_text'] = function(block) {
-    var txt = block.getFieldValue('TEXT') || '';
-    return "print('" + txt.replace(/'/g, "\\'") + "')\n";
-  };
-  Blockly.Python['move_steps'] = function(block) {
-    var steps = block.getFieldValue('STEPS') || '10';
-    return "move_steps(" + steps + ")\n";
-  };
-  Blockly.Python['play_meow'] = function(block) { return "play_sound('meow')\n"; };
-  Blockly.Python['turn_right'] = function(block) {
-    var deg = block.getFieldValue('DEGREES') || '90';
-    return "turn_right(" + deg + ")\n";
-  };
-  Blockly.Python['sensor_light'] = function(block) { return ["get_light_sensor()", Blockly.Python.ORDER_FUNCTION_CALL]; };
-  Blockly.Python['led_on'] = function(block) { return "led.on()\n"; };
-  Blockly.Python['led_off'] = function(block) { return "led.off()\n"; };
-  Blockly.Python['event_button'] = function(block) { return "# on_button_click:\n"; };
-  Blockly.Python['screen_switch'] = function(block) {
-    var screen = block.getFieldValue('SCREEN') || '';
-    return "switch_screen('" + screen + "')\n";
-  };
-  Blockly.Python['var_score_get'] = function(block) { return ["score", Blockly.Python.ORDER_ATOMIC]; };
-  Blockly.Python['var_score_change'] = function(block) {
-    var delta = block.getFieldValue('DELTA') || '1';
-    return "score += " + delta + "\n";
-  };
-  Blockly.Python['var_score_set'] = function(block) {
-    var val = block.getFieldValue('VAL') || '0';
-    return "score = " + val + "\n";
-  };
-  Blockly.Python['show_score'] = function(block) { return "print(f'Score: {score}')\n"; };
-
-  Blockly.Python.forBlock = Blockly.Python.forBlock || {};
-  Object.assign(Blockly.Python.forBlock, Blockly.Python);
-}
-
 return $.__chunk_python;
 }));
 
