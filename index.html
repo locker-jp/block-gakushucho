@@ -233,7 +233,7 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
   <div class="container">
     <h1>小・中・高対応 プログラミング・情報教材 『ブロック学習帳』</h1>
     <p style="font-size:1.05rem;line-height:1.7;color:#334155;margin-bottom:20px;">
-      『ブロック学習帳』へようこそ！小学校の基礎から中学校技術科、高等学校「情報Ⅰ」まで、インストール不要・オフラインで安心してお使いいただける統合型プログラミング学習教材です。児童生徒が直感的に動かせるブロック操作から、共通テスト標準言語 (DNCL) や Python へのステップアップまでスムーズに接続します。
+      『ブロック学習帳』へようこそ！小学校の基礎から中学校技術科、高等学校「情報Ⅰ」まで対応した統合型プログラミング学習教材です。ダウンロードと展開にはネットワーク接続が必要ですが、展開後は授業中オフラインでご利用いただけます（下記のセットアップ手順をご覧ください）。児童生徒が直感的に動かせるブロック操作から、共通テスト標準言語 (DNCL) や Python へのステップアップまでスムーズに接続します。
     </p>
 
     <!-- 🌟 最新のお知らせ・更新履歴インライン掲載 -->
@@ -242,7 +242,7 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
         <h3 style="margin:0;color:#92400e;font-size:1.05rem;display:flex;align-items:center;gap:6px;">
           <span>🌟 最新のお知らせ・更新履歴 (News)</span>
         </h3>
-        <a href="gakushucho.html?teach=1#news" style="font-size:0.85rem;color:#b45309;font-weight:bold;text-decoration:underline;">詳細ページを見る ➔</a>
+        <a href="gakushucho_teach.html#news" style="font-size:0.85rem;color:#b45309;font-weight:bold;text-decoration:underline;">詳細ページを見る ➔</a>
       </div>
       
       <!-- レスポンシブ スクロールコンテナ -->
@@ -280,10 +280,10 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
       </p>
 
       <gakushu-note kind="neutral" style="margin-bottom:16px;font-size:0.9rem;">
-        <div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">💡 簡単・安心の2ステップ設置手順：</div>
+        <div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">💡 かんたん2ステップの設置手順：</div>
         <ol style="margin:0;padding-left:20px;line-height:1.7;">
-          <li><strong>① 指導者用フォルダの準備:</strong> <code>指導者用</code> フォルダを作成し、<code>gakushucho.zip</code> を全展開します（全指導案付きで起動）。</li>
-          <li><strong>② 学習者用フォルダの準備:</strong> <code>学習者用</code> フォルダを作成して展開後、<code>js/teach.js</code> を削除して生徒端末へ配付します（指導案非表示で安心起動）。</li>
+          <li><strong>① 指導者用として使う場合:</strong> <code>指導者用</code> フォルダを作成し、<code>gakushucho.zip</code> を全展開してそのまま配置します（<code>gakushucho_teach.html</code> から全指導案付きで起動）。</li>
+          <li><strong>② 学習者用として配布する場合:</strong> <code>学習者用</code> フォルダを作成して展開後、<code>gakushucho_teach.html</code> を削除して生徒端末へ配付します（<code>gakushucho.html</code> のみが残り、指導案を含まない状態になります）。</li>
         </ol>
       </gakushu-note>
 
@@ -291,44 +291,44 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
         <a href="gakushucho.zip" style="display:inline-flex;align-items:center;gap:6px;background:var(--primary-color);color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;box-shadow:0 4px 12px rgba(37,99,235,0.25);">
           <span>📦 gakushucho.zip をダウンロード</span>
         </a>
-        <a href="gakushucho.html?teach=1#setup" style="display:inline-flex;align-items:center;gap:6px;background:#475569;color:white;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">
+        <a href="gakushucho_teach.html#setup" style="display:inline-flex;align-items:center;gap:6px;background:#475569;color:white;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">
           <span>📖 詳細な導入・セットアップガイドを見る</span>
         </a>
       </div>
     </gakushu-note>
 
     <div class="card-grid" style="margin-top:24px;">
-      <a class="card" href="gakushucho.html?teach=0">
+      <a class="card" href="gakushucho.html">
         <gakushu-tag kind="blue">学習者用</gakushu-tag>
         <div class="card-title">📘 ブロック学習帳</div>
         <div class="card-desc">小学校・中学校・高校生が直接ブロックを組み立てて直感的に学ぶ学習ツール（全8章24節）</div>
       </a>
-      <a class="card" href="gakushucho.html?teach=1">
+      <a class="card" href="gakushucho_teach.html">
         <gakushu-tag kind="green">指導者用</gakushu-tag>
         <div class="card-title">📗 指導用学習帳</div>
         <div class="card-desc">全8章の学習帳、指導者用解説、統合ガイドライン、詳細指導案を網羅した指導者用ツール</div>
       </a>
-      <a class="card" href="gakushucho.html?teach=1#setup">
+      <a class="card" href="gakushucho_teach.html#setup">
         <gakushu-tag kind="amber">巻末付録①</gakushu-tag>
         <div class="card-title">📦 オフライン設置・端末別セットアップガイド</div>
-        <div class="card-desc">非技術者の指導者でも迷わない、指導者用端末と学習者用端末（<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">js/teach.js</code> 削除）のセットアップ解説</div>
+        <div class="card-desc">非技術者の指導者でも迷わない、指導者用端末と学習者用端末（<code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">gakushucho_teach.html</code> 削除）のセットアップ解説</div>
       </a>
-      <a class="card" href="gakushucho.html?teach=1#overview">
+      <a class="card" href="gakushucho_teach.html#overview">
         <gakushu-tag kind="indigo">巻末付録②</gakushu-tag>
         <div class="card-title">📖 教材概要 ＆ ガイドライン</div>
         <div class="card-desc">『ブロック学習帳』の指導理念、教材の特長、小中高のステップアップおよび活用方針</div>
       </a>
-      <a class="card" href="gakushucho.html?teach=1#news">
+      <a class="card" href="gakushucho_teach.html#news">
         <gakushu-tag kind="amber">巻末付録③</gakushu-tag>
         <div class="card-title">🌟 最新のお知らせ ＆ 更新履歴</div>
         <div class="card-desc">『ブロック学習帳』の公開用更新履歴および今後の開発・公開ロードマップ</div>
       </a>
-      <a class="card" href="gakushucho.html?teach=1#teacher_appendix">
+      <a class="card" href="gakushucho_teach.html#teacher_appendix">
         <gakushu-tag kind="green">巻末付録④</gakushu-tag>
         <div class="card-title">📎 観点別評価規準 ＆ 授業展開表</div>
         <div class="card-desc">小中高の学習指導要領に対応した観点別評価規準および標準的な授業展開モデル</div>
       </a>
-      <a class="card" href="gakushucho.html?teach=1#lesson_plan">
+      <a class="card" href="gakushucho_teach.html#lesson_plan">
         <gakushu-tag kind="amber">巻末付録⑤</gakushu-tag>
         <div class="card-title">📋 全8章 授業詳細指導案・評価規準一覧</div>
         <div class="card-desc">全8章24節の授業フロー、発問・口頭指導メッセージ、観点別評価規準を節ごとに掲載</div>

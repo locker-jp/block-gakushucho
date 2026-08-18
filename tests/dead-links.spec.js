@@ -31,14 +31,23 @@ function getPageIds(html) {
 
 test('内部リンク: index.htmlのhrefが全て実在するページ・ファイルを指している', () => {
   const html = read('index.html');
-  const gakushuchoIds = getPageIds(read('gakushucho.html'));
+  const learnerIds = getPageIds(read('gakushucho.html'));
+  const teacherIds = getPageIds(read('gakushucho_teach.html'));
   for (const href of extractHrefs(html)) {
     if (/^https?:\/\//.test(href)) continue; // 外部URLは別テストで検証
+    if (href.startsWith('gakushucho_teach.html')) {
+      const hashIdx = href.indexOf('#');
+      if (hashIdx >= 0) {
+        const key = href.slice(hashIdx + 1);
+        assert.ok(teacherIds.has(key), `index.html→gakushucho_teach.html#${key} に対応するページIDが無い (href="${href}")`);
+      }
+      continue;
+    }
     if (href.startsWith('gakushucho.html')) {
       const hashIdx = href.indexOf('#');
       if (hashIdx >= 0) {
         const key = href.slice(hashIdx + 1);
-        assert.ok(gakushuchoIds.has(key), `index.html→gakushucho.html#${key} に対応するページIDが無い (href="${href}")`);
+        assert.ok(learnerIds.has(key), `index.html→gakushucho.html#${key} に対応するページIDが無い (href="${href}")`);
       }
       continue;
     }
@@ -50,27 +59,29 @@ test('内部リンク: index.htmlのhrefが全て実在するページ・ファ�
   }
 });
 
-test('内部リンク: gakushucho.html内のhrefが全て実在するアンカー・付属ファイルを指している', () => {
-  const html = read('gakushucho.html');
-  const pageIds = getPageIds(html);
-  for (const href of extractHrefs(html)) {
-    if (/^https?:\/\//.test(href)) continue;
-    if (href.startsWith('#')) {
-      const key = href.slice(1);
-      assert.ok(pageIds.has(key), `href="${href}" に対応する id="page-${key}" が無い`);
-      continue;
+for (const file of ['gakushucho.html', 'gakushucho_teach.html']) {
+  test(`内部リンク: ${file}内のhrefが全て実在するアンカー・付属ファイルを指している`, () => {
+    const html = read(file);
+    const pageIds = getPageIds(html);
+    for (const href of extractHrefs(html)) {
+      if (/^https?:\/\//.test(href)) continue;
+      if (href.startsWith('#')) {
+        const key = href.slice(1);
+        assert.ok(pageIds.has(key), `href="${href}" に対応する id="page-${key}" が無い`);
+        continue;
+      }
+      if (href === 'index.html') {
+        assert.ok(fs.existsSync(path.join(rootDir, 'index.html')), 'index.html が存在しない');
+        continue;
+      }
+      if (href.startsWith('worksheets/')) {
+        assert.ok(fs.existsSync(path.join(rootDir, href)), `${href} が存在しない`);
+        continue;
+      }
+      assert.fail(`未知のリンク形式: href="${href}"（チェッカー側の対応漏れの可能性、要確認）`);
     }
-    if (href === 'index.html') {
-      assert.ok(fs.existsSync(path.join(rootDir, 'index.html')), 'index.html が存在しない');
-      continue;
-    }
-    if (href.startsWith('worksheets/')) {
-      assert.ok(fs.existsSync(path.join(rootDir, href)), `${href} が存在しない`);
-      continue;
-    }
-    assert.fail(`未知のリンク形式: href="${href}"（チェッカー側の対応漏れの可能性、要確認）`);
-  }
-});
+  });
+}
 
 test('外部リンク: 独自コンテンツ（LICENSE/README/正本md/build.js/DNCLエンジン）内のURLが到達可能', { timeout: 60000 }, async (t) => {
   // build/devel/*.md（開発者向け変更履歴）は対象外。過去に検出したリンク切れの

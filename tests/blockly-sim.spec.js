@@ -20,7 +20,7 @@ test.afterEach(async () => {
 
 /** 指定ページIDへ移動し、Blocklyワークスペースが初期化されるまで待つ */
 async function openSection(page, sectionId) {
-  await page.goto(`gakushucho.html?teach=1#${sectionId}`);
+  await page.goto(`gakushucho.html#${sectionId}`);
   const container = page.locator(`#page-${sectionId} .blockly-embed-container`).first();
   await expect(container).toBeVisible();
   // Blockly.injectはページがactiveになった時点で実行される。ブロックが描画されるまで待つ。

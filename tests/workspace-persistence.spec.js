@@ -19,7 +19,7 @@ test.afterEach(async () => {
 });
 
 async function openSection(page, sectionId) {
-  await page.goto(`gakushucho.html?teach=1#${sectionId}`);
+  await page.goto(`gakushucho.html#${sectionId}`);
   const container = page.locator(`#page-${sectionId} .blockly-embed-container`).first();
   await expect(container).toBeVisible();
   await expect(container.locator('.blockly-workspace-div .blocklyDraggable').first()).toBeAttached({ timeout: 10000 });
@@ -136,7 +136,7 @@ test('自動保存: 別のブラウザコンテキスト（＝別端末・別プ
 
   const otherContext = await browser.newContext();
   const otherPage = await otherContext.newPage();
-  await otherPage.goto(`gakushucho.html?teach=1#1-1`);
+  await otherPage.goto(`gakushucho.html#1-1`);
   await expect(otherPage.locator('#page-1-1 .blockly-workspace-div .blocklyDraggable').first()).toBeAttached({ timeout: 10000 });
   const otherSaved = await otherPage.evaluate(() => localStorage.getItem('gakushucho_ws_ch01-1'));
   expect(otherSaved).toBeNull();
@@ -198,7 +198,7 @@ test('全件エクスポート: 複数実習ぶんの自動保存データがま
   await page.evaluate(() => document.querySelector('#page-1-1 blockly-lab').getWorkspace().newBlock('sound_play').initSvg());
   await page.waitForTimeout(800);
 
-  await page.goto('gakushucho.html?teach=1#2-1');
+  await page.goto('gakushucho.html#2-1');
   const container2 = page.locator('#page-2-1 .blockly-embed-container').first();
   await expect(container2.locator('.blockly-workspace-div .blocklyDraggable').first()).toBeAttached({ timeout: 10000 });
   await page.evaluate(() => document.querySelector('#page-2-1 blockly-lab').getWorkspace().newBlock('sound_play').initSvg());

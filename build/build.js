@@ -234,7 +234,7 @@ gakushu-tag[kind="indigo"] { background: #e0e7ff; color: #3730a3; }
 `;
 
 // .teacher-guide-annotation の色・枠の見た目は gakushu-note[kind="success"]（commonCss側）に統合済み。
-// このクラス自体は .mode-learn/.mode-teach の表示切り替えCSSが参照する「マーカー」としてのみ残す。
+// このクラス自体はCSSでは使わず、指導案注釈であることを示すセマンティックなマーカー（テスト等が参照）としてのみ残す。
 const guideAnnotationCss = '';
 
 // 共有 Web Components (Custom Elements) 定義。commonCss と同様、<style>${commonCss}</style> が
@@ -603,7 +603,7 @@ function buildLessonPlanHtml(sections, relPrefix = '') {
   return lessonPlanHtml;
 }
 
-function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
+function generateSingleGakushuchoHtml(sections, targetDir, forTeacher, mainTitle, outputFilename) {
   if (!fs.existsSync(targetDir)) {
     fs.mkdirSync(targetDir, { recursive: true });
   }
@@ -613,9 +613,12 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
   const pagesList = [];
   const pagesHtml = [];
 
-  // 全セクション（指導者用含む）を全内包 (目次・学習帳本体・学習カード付録を先頭に、指導者ハンドブック類は巻末付録に配置)
+  // 指導者用ビルドのみ、指導者ハンドブック類（setup/overview/news/teacher_appendix）を巻末付録として内包する。
+  // 学習者用ビルドは章節本文・目次・付録のみで、指導者向けコンテンツは一切生成しない。
   const chapterKeys = getSortedChapterKeys(sections);
-  const orderKeys = ['toc', ...chapterKeys, 'appendix', 'setup', 'overview', 'news', 'teacher_appendix'];
+  const orderKeys = forTeacher
+    ? ['toc', ...chapterKeys, 'appendix', 'setup', 'overview', 'news', 'teacher_appendix']
+    : ['toc', ...chapterKeys, 'appendix'];
 
   orderKeys.forEach(k => {
     if (!sections[k]) return;
@@ -624,11 +627,10 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
     if (k === 'setup' || k === 'overview' || k === 'news' || k === 'toc' || k === 'appendix' || k === 'teacher_appendix') {
       const pageId = k;
       const title = extractH1Title(rawText, k);
-      const isTeacherOnly = (k === 'setup' || k === 'overview' || k === 'news' || k === 'teacher_appendix');
-      pagesList.push({ id: pageId, title: title, teacherOnly: isTeacherOnly });
-      const convertedHtml = mdToHtml(rawText, null, null, true, relPrefix);
+      pagesList.push({ id: pageId, title: title });
+      const convertedHtml = mdToHtml(rawText, null, null, forTeacher, relPrefix);
       pagesHtml.push(`
-    <div id="page-${pageId}" class="section-page ${isTeacherOnly ? 'teacher-only-page' : ''}" data-page-id="${pageId}" data-page-title="${title}">
+    <div id="page-${pageId}" class="section-page" data-page-id="${pageId}" data-page-title="${title}">
       ${convertedHtml}
     </div>`);
     } else {
@@ -647,8 +649,8 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
             pageTitle = `第${chNum}章：${cleanH1}`;
           }
 
-          pagesList.push({ id: pageId, title: pageTitle, teacherOnly: false });
-          const convertedHtml = mdToHtml(part, chNum, 0, true, relPrefix);
+          pagesList.push({ id: pageId, title: pageTitle });
+          const convertedHtml = mdToHtml(part, chNum, 0, forTeacher, relPrefix);
           pagesHtml.push(`
     <div id="page-${pageId}" class="section-page" data-page-id="${pageId}" data-page-title="${pageTitle}">
       ${convertedHtml}
@@ -659,8 +661,8 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
           const cleanTitle = cleanSectionHeading(firstLine);
           const pageTitle = cleanTitle ? `${chNum}-${secIdx}. ${cleanTitle}` : `${chNum}-${secIdx}`;
 
-          pagesList.push({ id: pageId, title: pageTitle, teacherOnly: false });
-          const convertedHtml = mdToHtml(part, chNum, secIdx, true, relPrefix);
+          pagesList.push({ id: pageId, title: pageTitle });
+          const convertedHtml = mdToHtml(part, chNum, secIdx, forTeacher, relPrefix);
           pagesHtml.push(`
     <div id="page-${pageId}" class="section-page" data-page-id="${pageId}" data-page-title="${pageTitle}">
       ${convertedHtml}
@@ -670,48 +672,25 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
     }
   });
 
-  // 全8章詳細指導案 (lesson_plan) も内包セクションとして生成
-  const extractedLessonPlanHtml = buildLessonPlanHtml(sections, relPrefix);
-  pagesList.push({ id: 'lesson_plan', title: `📋 全${contentStats.chapterCount}章 授業詳細指導案一覧`, teacherOnly: true });
-  pagesHtml.push(`
-    <div id="page-lesson_plan" class="section-page teacher-only-page" data-page-id="lesson_plan" data-page-title="📋 全${contentStats.chapterCount}章 授業詳細指導案一覧">
+  // 全8章詳細指導案 (lesson_plan) は指導者用ビルドのみ内包セクションとして生成
+  if (forTeacher) {
+    const extractedLessonPlanHtml = buildLessonPlanHtml(sections, relPrefix);
+    pagesList.push({ id: 'lesson_plan', title: `📋 全${contentStats.chapterCount}章 授業詳細指導案一覧` });
+    pagesHtml.push(`
+    <div id="page-lesson_plan" class="section-page" data-page-id="lesson_plan" data-page-title="📋 全${contentStats.chapterCount}章 授業詳細指導案一覧">
       <gakushu-note kind="success" style="margin-bottom:24px;">
         <h2 style="margin-top:0;color:#166534;">📋 教員・指導者用 詳細指導案一覧</h2>
         <p style="margin:0;font-size:0.9rem;color:#15803d;">全${contentStats.chapterCount}章${contentStats.totalSections}節の授業フロー、口頭メッセージ、観点別評価規準を網羅した指導用参考資料です。</p>
       </gakushu-note>
       ${extractedLessonPlanHtml}
     </div>`);
+  }
 
   const fullSpaHtml = `<!DOCTYPE html>
 <html lang="ja">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${mainTitle}</title>
-  <!-- 指導者モード動的探知 ＆ URLクエリ手動上書き判定スクリプト -->
-  <script>
-    window.OVERRIDE_TEACH = null;
-    (function() {
-      try {
-        var p = new URLSearchParams(window.location.search);
-        if (p.has('teach')) {
-          window.OVERRIDE_TEACH = (p.get('teach') === '1');
-        } else if (p.has('mode')) {
-          window.OVERRIDE_TEACH = (p.get('mode') === 'teach');
-        }
-      } catch(e){}
-    })();
-    window.IS_TEACHER_ENVIRONMENT = false;
-  </script>
-  <!-- js/teach.js の存在探知 (生徒PC等で除外されていれば404/onerrorとなり無効化) -->
-  <script src="${relPrefix}js/teach.js" onerror="window.IS_TEACHER_ENVIRONMENT=false;"></script>
-  <script>
-    window.IS_TEACHER_MODE = (window.OVERRIDE_TEACH !== null) ? window.OVERRIDE_TEACH : window.IS_TEACHER_ENVIRONMENT;
-    if (window.IS_TEACHER_MODE) {
-      document.documentElement.classList.add('mode-teach');
-    } else {
-      document.documentElement.classList.add('mode-learn');
-    }
-  </script>
   <!-- Blockly ライブラリ (授業時オフラインローカル優先 ＆ 自動フォールバック描画) -->
   <script src="${relPrefix}js/blockly_compressed.js"></script>
   <script src="${relPrefix}js/blocks_compressed.js"></script>
@@ -736,20 +715,8 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
   <style>
     ${commonCss}
     ${guideAnnotationCss}
-    /* モード別表示切り替えCSS */
     .section-page { display: none; }
     .section-page.active { display: block; }
-
-    .mode-learn .teacher-guide-annotation,
-    .mode-learn .teacher-only-page,
-    .mode-learn .teacher-only-menu,
-    .mode-learn .teacher-only-btn { display: none !important; }
-
-    .mode-teach .teacher-guide-annotation { display: block; }
-    .mode-teach .teacher-only-page { display: none; }
-    .mode-teach .teacher-only-page.active { display: block; }
-    .mode-teach .teacher-only-menu { display: block; }
-    .mode-teach .teacher-only-btn { display: inline-flex !important; }
     .layout-wrapper { display: flex; min-height: auto; }
     .sidebar {
       width: 280px;
@@ -1084,7 +1051,7 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
     let currentIndex = 0;
 
     function getActivePages() {
-      return allPages.filter(p => window.IS_TEACHER_MODE || !p.teacherOnly);
+      return allPages;
     }
 
     function renderNavs() {
@@ -1094,7 +1061,6 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
       menu.innerHTML = '';
       activePages.forEach((p, idx) => {
         const li = document.createElement('li');
-        if (p.teacherOnly) li.classList.add('teacher-only-menu');
         const a = document.createElement('a');
         a.href = '#' + p.id;
         a.textContent = p.title;
@@ -2319,7 +2285,7 @@ function generateSingleGakushuchoHtml(sections, targetDir, isGuide, mainTitle) {
 </body>
 </html>`;
 
-  const outputPath = path.join(targetDir, 'gakushucho.html');
+  const outputPath = path.join(targetDir, outputFilename);
   fs.writeFileSync(outputPath, fullSpaHtml, 'utf-8');
   console.log(`  Generated Single Integrated SPA: ${path.relative(rootDir, outputPath)} (${pagesList.length} 節ページ切り替え対応)`);
   // 旧個別サブポータルの生成処理は撤去し、トップ統合ポータル index.html へ一元化
@@ -2470,8 +2436,9 @@ validatePresetReferences(masterSections, PRESETS);
 contentStats = computeContentStats(masterSections);
 portalCards = parsePortalCards(masterSections);
 
-console.log('\n=== Building Single Integrated SPA gakushucho.html ===');
-generateSingleGakushuchoHtml(masterSections, rootDir, true, '📘 『ブロック学習帳』');
+console.log('\n=== Building Single Integrated SPA (学習者用 gakushucho.html / 指導者用 gakushucho_teach.html) ===');
+generateSingleGakushuchoHtml(masterSections, rootDir, false, '📘 ブロック学習帳', 'gakushucho.html');
+generateSingleGakushuchoHtml(masterSections, rootDir, true, '📗 指導用学習帳', 'gakushucho_teach.html');
 
 // devel/*.html コンパイル生成
 console.log('\n=== Building devel/*.html (内部開発用ドキュメント類 [ref01, changelog]) ===');
@@ -2495,7 +2462,7 @@ const portalHtml = `<!DOCTYPE html>
   <div class="container">
     <h1>小・中・高対応 プログラミング・情報教材 『ブロック学習帳』</h1>
     <p style="font-size:1.05rem;line-height:1.7;color:#334155;margin-bottom:20px;">
-      『ブロック学習帳』へようこそ！小学校の基礎から中学校技術科、高等学校「情報Ⅰ」まで、インストール不要・オフラインで安心してお使いいただける統合型プログラミング学習教材です。児童生徒が直感的に動かせるブロック操作から、共通テスト標準言語 (DNCL) や Python へのステップアップまでスムーズに接続します。
+      『ブロック学習帳』へようこそ！小学校の基礎から中学校技術科、高等学校「情報Ⅰ」まで対応した統合型プログラミング学習教材です。ダウンロードと展開にはネットワーク接続が必要ですが、展開後は授業中オフラインでご利用いただけます（下記のセットアップ手順をご覧ください）。児童生徒が直感的に動かせるブロック操作から、共通テスト標準言語 (DNCL) や Python へのステップアップまでスムーズに接続します。
     </p>
 
     <!-- 🌟 最新のお知らせ・更新履歴インライン掲載 -->
@@ -2504,7 +2471,7 @@ const portalHtml = `<!DOCTYPE html>
         <h3 style="margin:0;color:#92400e;font-size:1.05rem;display:flex;align-items:center;gap:6px;">
           <span>🌟 最新のお知らせ・更新履歴 (News)</span>
         </h3>
-        <a href="gakushucho.html?teach=1#news" style="font-size:0.85rem;color:#b45309;font-weight:bold;text-decoration:underline;">詳細ページを見る ➔</a>
+        <a href="gakushucho_teach.html#news" style="font-size:0.85rem;color:#b45309;font-weight:bold;text-decoration:underline;">詳細ページを見る ➔</a>
       </div>
       
       <!-- レスポンシブ スクロールコンテナ -->
@@ -2542,10 +2509,10 @@ const portalHtml = `<!DOCTYPE html>
       </p>
 
       <gakushu-note kind="neutral" style="margin-bottom:16px;font-size:0.9rem;">
-        <div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">💡 簡単・安心の2ステップ設置手順：</div>
+        <div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">💡 かんたん2ステップの設置手順：</div>
         <ol style="margin:0;padding-left:20px;line-height:1.7;">
-          <li><strong>① 指導者用フォルダの準備:</strong> <code>指導者用</code> フォルダを作成し、<code>gakushucho.zip</code> を全展開します（全指導案付きで起動）。</li>
-          <li><strong>② 学習者用フォルダの準備:</strong> <code>学習者用</code> フォルダを作成して展開後、<code>js/teach.js</code> を削除して生徒端末へ配付します（指導案非表示で安心起動）。</li>
+          <li><strong>① 指導者用として使う場合:</strong> <code>指導者用</code> フォルダを作成し、<code>gakushucho.zip</code> を全展開してそのまま配置します（<code>gakushucho_teach.html</code> から全指導案付きで起動）。</li>
+          <li><strong>② 学習者用として配布する場合:</strong> <code>学習者用</code> フォルダを作成して展開後、<code>gakushucho_teach.html</code> を削除して生徒端末へ配付します（<code>gakushucho.html</code> のみが残り、指導案を含まない状態になります）。</li>
         </ol>
       </gakushu-note>
 
@@ -2553,19 +2520,19 @@ const portalHtml = `<!DOCTYPE html>
         <a href="gakushucho.zip" style="display:inline-flex;align-items:center;gap:6px;background:var(--primary-color);color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;box-shadow:0 4px 12px rgba(37,99,235,0.25);">
           <span>📦 gakushucho.zip をダウンロード</span>
         </a>
-        <a href="gakushucho.html?teach=1#setup" style="display:inline-flex;align-items:center;gap:6px;background:#475569;color:white;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">
+        <a href="gakushucho_teach.html#setup" style="display:inline-flex;align-items:center;gap:6px;background:#475569;color:white;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">
           <span>📖 詳細な導入・セットアップガイドを見る</span>
         </a>
       </div>
     </gakushu-note>
 
     <div class="card-grid" style="margin-top:24px;">
-      <a class="card" href="gakushucho.html?teach=0">
+      <a class="card" href="gakushucho.html">
         <gakushu-tag kind="blue">学習者用</gakushu-tag>
         <div class="card-title">📘 ブロック学習帳</div>
         <div class="card-desc">小学校・中学校・高校生が直接ブロックを組み立てて直感的に学ぶ学習ツール（全${contentStats.chapterCount}章${contentStats.totalSections}節）</div>
       </a>
-      <a class="card" href="gakushucho.html?teach=1">
+      <a class="card" href="gakushucho_teach.html">
         <gakushu-tag kind="green">指導者用</gakushu-tag>
         <div class="card-title">📗 指導用学習帳</div>
         <div class="card-desc">全${contentStats.chapterCount}章の学習帳、指導者用解説、統合ガイドライン、詳細指導案を網羅した指導者用ツール</div>
@@ -2576,7 +2543,7 @@ const portalHtml = `<!DOCTYPE html>
         if (!card) return `<!-- portal_cardsセクションに ${key} のCARD定義がありません -->`;
         const title = inlineFormatting(fillCardPlaceholders(card.title, contentStats));
         const desc = inlineFormatting(fillCardPlaceholders(card.desc, contentStats));
-        return `<a class="card" href="gakushucho.html?teach=1#${key}">
+        return `<a class="card" href="gakushucho_teach.html#${key}">
         <gakushu-tag kind="${card.tagKind}">巻末付録${num}</gakushu-tag>
         <div class="card-title">${title}</div>
         <div class="card-desc">${desc}</div>

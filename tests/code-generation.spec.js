@@ -6,7 +6,7 @@
 const { test, expect } = require('@playwright/test');
 
 async function openSection(page, sectionId) {
-  await page.goto(`gakushucho.html?teach=1#${sectionId}`);
+  await page.goto(`gakushucho.html#${sectionId}`);
   const container = page.locator(`#page-${sectionId} .blockly-embed-container`).first();
   await expect(container).toBeVisible();
   await expect(container.locator('.blockly-workspace-div .blocklyDraggable').first()).toBeAttached({ timeout: 10000 });
