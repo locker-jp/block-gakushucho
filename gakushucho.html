@@ -150,6 +150,10 @@ body {
 .section-page { display: none; }
 .section-page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
 
+/* mdToHtml() の「- 」箇条書き変換（370行付近）が使う共通スタイル。インデント有無で見た目を出し分ける。 */
+li.li-nested { margin-left: 24px; list-style-type: circle; }
+li.li-heading { margin-top: 8px; font-weight: bold; }
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -571,7 +575,11 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
       <h1>📋 目次・学習の進め方</h1>
 <p>『ブロック学習帳』へようこそ！この学習帳では、ブロックを組み立てながら、コンピュータに命令を出す楽しさと仕組みを学びます。</p>
 <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">
-<h2>💡 学習の進め方（原則5つのステップ）</h2>
+
+    </div>
+
+    <div id="page-toc_1" class="section-page" data-page-id="toc_1" data-page-title="💡 学習の進め方（原則5つのステップ）">
+      <h2>💡 学習の進め方（原則5つのステップ）</h2>
 <p>各節は、<strong>原則として以下の5つのステップ</strong>に沿って進みます。（※単元の性質や学習課題に応じて最適なステップ構成をとります。）</p>
 <li><strong>【1. 読む】</strong> — 場面や問いの文をよく読みます。</li>
 <li><strong>【2. 予想する】</strong> — 「動かすとどうなるか？」を予想します。</li>
@@ -579,41 +587,45 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
 <li><strong>【4. 説明する】</strong> — 起きたことを自分の言葉や選択肢で説明します。</li>
 <li><strong>【5. 直す・深める】</strong> — 間違いを見つけたり（デバッグ）、さらに工夫したりします。</li>
 <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">
-<h2>📖 章の一覧（全8章）</h2>
-<li style="margin-top: 8px; font-weight: bold;"><strong>第1章：ブロックを動かそう（順次処理と基本操作）</strong></li>
-<li style="margin-left: 24px; list-style-type: circle;">1-1. 最初に命令を組んでみよう</li>
-<li style="margin-left: 24px; list-style-type: circle;">1-2. 順番につなげてストーリーを作ろう（順次処理）</li>
-<li style="margin-left: 24px; list-style-type: circle;">1-3. 予期せぬ動きを直そう（デバッグの第一歩）</li>
-<li style="margin-top: 8px; font-weight: bold;"><strong>第2章：くり返すと条件で分ける（反復と条件分岐）</strong></li>
-<li style="margin-left: 24px; list-style-type: circle;">2-1. 同じ動きを「くり返し」におまかせ（反復処理）</li>
-<li style="margin-left: 24px; list-style-type: circle;">2-2. スイッチで動きを変えよう（条件分岐）</li>
-<li style="margin-left: 24px; list-style-type: circle;">2-3. 反復と条件を組み合わせる</li>
-<li style="margin-top: 8px; font-weight: bold;"><strong>第3章：算数と理科を動かして確かめる（教科連携）</strong></li>
-<li style="margin-left: 24px; list-style-type: circle;">3-1. 【算数5年】正多角形の秘密と角度</li>
-<li style="margin-left: 24px; list-style-type: circle;">3-2. 【理科6年】電気の利用とセンサー自動制御</li>
-<li style="margin-left: 24px; list-style-type: circle;">3-3. 【算数5・6年】数と規則性・データの活用</li>
-<li style="margin-top: 8px; font-weight: bold;"><strong>第4章：相手に伝わるアプリをつくる（画面設計と変数）</strong></li>
-<li style="margin-left: 24px; list-style-type: circle;">4-1. 見やすく押しやすい画面をつくろう（画面設計・UI）</li>
-<li style="margin-left: 24px; list-style-type: circle;">4-2. 場面を切り替えよう（画面遷移とクイズ）</li>
-<li style="margin-left: 24px; list-style-type: circle;">4-3. 点数や名前を記憶させよう（変数と状態管理）</li>
-<li style="margin-top: 8px; font-weight: bold;"><strong>第5章：【中学校 技術】双方向コンテンツと計測・制御（D 情報の技術）</strong></li>
-<li style="margin-left: 24px; list-style-type: circle;">5-1. 双方向Webコンテンツと状態保持（D(2)）</li>
-<li style="margin-left: 24px; list-style-type: circle;">5-2. センサーとアクチュエータによる自動制御（D(3)）</li>
-<li style="margin-left: 24px; list-style-type: circle;">5-3. 計測・制御システムのデバッグと問題解決</li>
-<li style="margin-top: 8px; font-weight: bold;"><strong>第6章：【高校 情報Ⅰ】アルゴリズムとPythonコード連携（情報Ⅰ入門）</strong></li>
-<li style="margin-left: 24px; list-style-type: circle;">6-1. データ構造（配列・リスト）とループ処理</li>
-<li style="margin-left: 24px; list-style-type: circle;">6-2. 処理の共通化と関数（手続き・戻り値）</li>
-<li style="margin-left: 24px; list-style-type: circle;">6-3. 基本アルゴリズムとPythonコード連携</li>
-<li style="margin-top: 8px; font-weight: bold;"><strong>第7章：学んだブロックで自分だけの作品をつくろう（自由制作・総合演習）</strong></li>
-<li style="margin-left: 24px; list-style-type: circle;">7-1. つくりたい作品のテーマを選ぼう（構想とテーマ決定）</li>
-<li style="margin-left: 24px; list-style-type: circle;">7-2. 画面とプログラムを組み立てよう（作品の制作）</li>
-<li style="margin-left: 24px; list-style-type: circle;">7-3. さらなる表現に挑戦しよう（発表・発展教材への接続）</li>
-<li style="margin-top: 8px; font-weight: bold;"><strong>第8章：情報の中で安全に楽しむ（情報モラル・リテラシー・AIの基本）</strong></li>
-<li style="margin-left: 24px; list-style-type: circle;">8-1. 画像や文章を使うときの約束（著作権・ルール）</li>
-<li style="margin-left: 24px; list-style-type: circle;">8-2. 大切な情報を守ろう（個人情報と安全な利用）</li>
-<li style="margin-left: 24px; list-style-type: circle;">8-3. 自動化とAIの得意・苦手を知ろう（AIの基本・ファクトチェック）</li>
-<li style="margin-top: 8px; font-weight: bold;"><strong>付録：ブロックリファレンス ＆ トラブルシューティング</strong></li>
-<li style="margin-left: 24px; list-style-type: circle;">付録A. ブロック一覧リファレンス / 付録B. トラブルシューティング / 付録C. 学習指導要領対応表 / 付録D. 授業用Web帳票・ワークシート集</li>
+
+    </div>
+
+    <div id="page-toc_2" class="section-page" data-page-id="toc_2" data-page-title="📖 章の一覧（全8章）">
+      <h2>📖 章の一覧（全8章）</h2>
+<li class="li-heading"><strong>第1章：ブロックを動かそう（順次処理と基本操作）</strong></li>
+<li class="li-nested">1-1. 最初に命令を組んでみよう</li>
+<li class="li-nested">1-2. 順番につなげてストーリーを作ろう（順次処理）</li>
+<li class="li-nested">1-3. 予期せぬ動きを直そう（デバッグの第一歩）</li>
+<li class="li-heading"><strong>第2章：くり返すと条件で分ける（反復と条件分岐）</strong></li>
+<li class="li-nested">2-1. 同じ動きを「くり返し」におまかせ（反復処理）</li>
+<li class="li-nested">2-2. スイッチで動きを変えよう（条件分岐）</li>
+<li class="li-nested">2-3. 反復と条件を組み合わせる</li>
+<li class="li-heading"><strong>第3章：算数と理科を動かして確かめる（教科連携）</strong></li>
+<li class="li-nested">3-1. 【算数5年】正多角形の秘密と角度</li>
+<li class="li-nested">3-2. 【理科6年】電気の利用とセンサー自動制御</li>
+<li class="li-nested">3-3. 【算数5・6年】数と規則性・データの活用</li>
+<li class="li-heading"><strong>第4章：相手に伝わるアプリをつくる（画面設計と変数）</strong></li>
+<li class="li-nested">4-1. 見やすく押しやすい画面をつくろう（画面設計・UI）</li>
+<li class="li-nested">4-2. 場面を切り替えよう（画面遷移とクイズ）</li>
+<li class="li-nested">4-3. 点数や名前を記憶させよう（変数と状態管理）</li>
+<li class="li-heading"><strong>第5章：【中学校 技術】双方向コンテンツと計測・制御（D 情報の技術）</strong></li>
+<li class="li-nested">5-1. 双方向Webコンテンツと状態保持（D(2)）</li>
+<li class="li-nested">5-2. センサーとアクチュエータによる自動制御（D(3)）</li>
+<li class="li-nested">5-3. 計測・制御システムのデバッグと問題解決</li>
+<li class="li-heading"><strong>第6章：【高校 情報Ⅰ】アルゴリズムとPythonコード連携（情報Ⅰ入門）</strong></li>
+<li class="li-nested">6-1. データ構造（配列・リスト）とループ処理</li>
+<li class="li-nested">6-2. 処理の共通化と関数（手続き・戻り値）</li>
+<li class="li-nested">6-3. 基本アルゴリズムとPythonコード連携</li>
+<li class="li-heading"><strong>第7章：学んだブロックで自分だけの作品をつくろう（自由制作・総合演習）</strong></li>
+<li class="li-nested">7-1. つくりたい作品のテーマを選ぼう（構想とテーマ決定）</li>
+<li class="li-nested">7-2. 画面とプログラムを組み立てよう（作品の制作）</li>
+<li class="li-nested">7-3. さらなる表現に挑戦しよう（発表・発展教材への接続）</li>
+<li class="li-heading"><strong>第8章：情報の中で安全に楽しむ（情報モラル・リテラシー・AIの基本）</strong></li>
+<li class="li-nested">8-1. 画像や文章を使うときの約束（著作権・ルール）</li>
+<li class="li-nested">8-2. 大切な情報を守ろう（個人情報と安全な利用）</li>
+<li class="li-nested">8-3. 自動化とAIの得意・苦手を知ろう（AIの基本・ファクトチェック）</li>
+<li class="li-heading"><strong>付録：ブロックリファレンス ＆ トラブルシューティング</strong></li>
+<li class="li-nested">付録A. ブロック一覧リファレンス / 付録B. トラブルシューティング（このほか、指導者用ファイルにはセットアップ・教材概要・更新履歴等の指導者向け資料を付録C〜Kとして収録しています）</li>
 
     </div>
 
@@ -921,7 +933,7 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
 <h3>【1. 読む】</h3>
 <p>複雑な計測・制御システムでは、ハードウェア（センサー・出力機器）とソフトウェア（プログラム）のどちらに問題があるかを切り分けて<strong>デバッグ</strong>することが不可欠です。</p>
 <h3>【2. 予想する】</h3>
-<p>自動制御システムが意図通りに動作しない場合、センサー値の読み取りミスか、比較演算子の不備か、紙の「デバッグトレース表（🖨️ A4印刷用Web帳票: 付録D-3 / <a href="worksheets/03_debug_trace_table.html" style="color:#2563eb;text-decoration:underline;" target="_blank">🐛 単体帳票</a>）」を用いて手書きで原因を仮説検証してみましょう。</p>
+<p>自動制御システムが意図通りに動作しない場合、センサー値の読み取りミスか、比較演算子の不備か、紙の「デバッグトレース表（🖨️ A4印刷用ワークシート: 付録K-3 / <a href="worksheets/03_debug_trace_table.html" style="color:#2563eb;text-decoration:underline;" target="_blank">🐛 印刷用に開く</a>）」を用いて手書きで原因を仮説検証してみましょう。</p>
 <h3>【3. 組む・動かす】</h3>
 <p>ログ出力ブロックおよび <strong>「micro:bit 実機のシリアルログ表示機能」</strong> を活用し、センサーの値と変数の中身をモニタ表示させながら、不具合箇所を特定・修正します。</p>
 <blockly-lab class="blockly-embed-container" data-preset="ch05-3" data-title="中学校演習：計測制御システムの統合デバッグ"></blockly-lab>
@@ -945,7 +957,7 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
 <h3>【1. 読む】</h3>
 <p>複数のデータを1つの名称でまとめて順番に管理するデータ構造を<strong>配列（リスト）</strong>と呼びます。各データには<strong>インデックス（添字）</strong>を用いてアクセスします。</p>
 <h3>【2. 予想する】</h3>
-<p>テストの点数が5人分格納されたリスト <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">[85, 92, 78, 90, 88]</code> の全要素の合計値を、繰り返し処理（ループ）を使って求めるアルゴリズムを、紙の「配列トレース表（🖨️ A4印刷用Web帳票: 付録D-4 / <a href="worksheets/04_array_trace_table.html" style="color:#2563eb;text-decoration:underline;" target="_blank">📊 単体帳票</a>）」に書き出して机上分析（ドライラン）してみましょう。</p>
+<p>テストの点数が5人分格納されたリスト <code style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-family:monospace;">[85, 92, 78, 90, 88]</code> の全要素の合計値を、繰り返し処理（ループ）を使って求めるアルゴリズムを、紙の「配列トレース表（🖨️ A4印刷用ワークシート: 付録K-4 / <a href="worksheets/04_array_trace_table.html" style="color:#2563eb;text-decoration:underline;" target="_blank">📊 印刷用に開く</a>）」に書き出して机上分析（ドライラン）してみましょう。</p>
 <h3>【3. 組む・動かす】</h3>
 <p>リストブロックとループ処理を組み合わせ、平均値の算出および最高点の探索プログラムを構築・実行します。</p>
 <blockly-lab class="blockly-embed-container" data-preset="ch06-1" data-title="高校演習：配列（リスト）と反復処理"></blockly-lab>
@@ -979,7 +991,7 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
 <h3>【1. 読む】</h3>
 <p>問題を解決するための明確な手順を<strong>アルゴリズム</strong>と呼びます。データ群から目的の値を検索する「探索（サーチ）」や、大小順に並べ替える「整列（ソート）」は基本アルゴリズムの代表例です。</p>
 <h3>【2. 予想する】</h3>
-<p>紙のトランプカードを用いた「カード探索アンプラグド演習」および「DNCLトレースシート（🖨️ A4印刷用Web帳票: 付録D-5 / <a href="worksheets/05_dncl_trace_sheet.html" style="color:#2563eb;text-decoration:underline;" target="_blank">📜 単体帳票</a>）」で手書きのアルゴリズム実行を行い、ビジュアルブロックやテキスト言語（Python）でどのように記述されるか比較・予測してみましょう。</p>
+<p>紙のトランプカードを用いた「カード探索アンプラグド演習」および「DNCLトレースシート（🖨️ A4印刷用ワークシート: 付録K-5 / <a href="worksheets/05_dncl_trace_sheet.html" style="color:#2563eb;text-decoration:underline;" target="_blank">📜 印刷用に開く</a>）」で手書きのアルゴリズム実行を行い、ビジュアルブロックやテキスト言語（Python）でどのように記述されるか比較・予測してみましょう。</p>
 <h3>【3. 組む・動かす】</h3>
 <p>探索アルゴリズムのブロックを動かすと同時に、右側のプレビューウィンドウに生成される Python / DNCL コードを観察・実行します。さらに、本格的な Python テキストエディタでの実用コードの記述にもチャレンジしてみましょう。</p>
 <blockly-lab class="blockly-embed-container" data-preset="ch06-3" data-title="高校演習：アルゴリズムとPython/DNCLプレビュー"></blockly-lab>
@@ -1041,9 +1053,9 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
 <p>「もっとキャラクターを動かすにはどんなツールが必要か？」を考えてみましょう。</p>
 <h3>【3. 組む・動かす】</h3>
 <p>発展的なツールに触れてみましょう。</p>
-<li style="margin-top: 8px; font-weight: bold;"><strong>【1. オフライン動作する デスクトップ版 Scratch（スクラッチ）】</strong> — インターネット不要でキャラクターや音を無限に追加して本格ゲームを制作。</li>
-<li style="margin-top: 8px; font-weight: bold;"><strong>【2. micro:bit（マイクロビット）などの実物デバイス】</strong> — 理科室の実験用小型コンピュータ。ボタンや光でLEDを自動制御。</li>
-<li style="margin-top: 8px; font-weight: bold;"><strong>【3. テキストプログラミング（Python）】</strong> — 高校「情報Ⅰ」で学んだ Python コードで本格システム開発。</li>
+<li class="li-heading"><strong>【1. オフライン動作する デスクトップ版 Scratch（スクラッチ）】</strong> — インターネット不要でキャラクターや音を無限に追加して本格ゲームを制作。</li>
+<li class="li-heading"><strong>【2. micro:bit（マイクロビット）などの実物デバイス】</strong> — 理科室の実験用小型コンピュータ。ボタンや光でLEDを自動制御。</li>
+<li class="li-heading"><strong>【3. テキストプログラミング（Python）】</strong> — 高校「情報Ⅰ」で学んだ Python コードで本格システム開発。</li>
 <h3>【4. 説明する】</h3>
 <p>今日作った作品のこだわりポイントと、これから作ってみたい作品のアイデアを振り返りシートに書きましょう！</p>
 <h3>【5. 直す・深める】</h3>
@@ -1064,9 +1076,9 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
 <p>友達が描いた絵を勝手にコピーして自分のアプリに使ってもいいでしょうか？自分が作ったものには<strong>著作権（ちょさくけん）</strong>という権利があります。</p>
 <h3>【2. 予想する】</h3>
 <p>インターネットで見つけた写真を自分のアプリに使ってもいいでしょうか？</p>
-<li style="margin-top: 8px; font-weight: bold;">A: 自由に使ってよい</li>
-<li style="margin-top: 8px; font-weight: bold;">B: 許可をもらうか、自分で撮った写真を使う</li>
-<li style="margin-top: 8px; font-weight: bold;">C: お金を払えば使ってよい</li>
+<li class="li-heading">A: 自由に使ってよい</li>
+<li class="li-heading">B: 許可をもらうか、自分で撮った写真を使う</li>
+<li class="li-heading">C: お金を払えば使ってよい</li>
 <h3>【3. 組む・動かす】</h3>
 <p>ワークシートに「自分がアプリで使う素材のルール（自分で描く、許可を得る）」を記入しましょう。</p>
 <h3>【4. 説明する】</h3>
@@ -1109,10 +1121,8 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
 
     </div>
 
-    <div id="page-appendix" class="section-page" data-page-id="appendix" data-page-title="📎 付録：ブロックリファレンス ＆ トラブルシューティング">
-      <h1>📎 付録：ブロックリファレンス ＆ トラブルシューティング</h1>
-<hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">
-<h2>付録A：ブロック一覧リファレンス（小・中・高全対応）</h2>
+    <div id="page-appendix_a" class="section-page" data-page-id="appendix_a" data-page-title="付録A：ブロック一覧リファレンス（小・中・高全対応）">
+      <h2>付録A：ブロック一覧リファレンス（小・中・高全対応）</h2>
 <table is="gakushu-table" class="gakushu-table" role="table">
   <tr>
     <th>分類</th>
@@ -1200,7 +1210,11 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
   </tr>
 </table>
 <hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">
-<h2>付録B：困ったときのトラブルシューティング</h2>
+
+    </div>
+
+    <div id="page-appendix_b" class="section-page" data-page-id="appendix_b" data-page-title="付録B：困ったときのトラブルシューティング">
+      <h2>付録B：困ったときのトラブルシューティング</h2>
 <h3>チェックリスト</h3>
 <table is="gakushu-table" class="gakushu-table" role="table">
   <tr>
@@ -1240,7 +1254,7 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
   </div>
 
   <script>
-    const allPages = [{"id":"toc","title":"📋 目次・学習の進め方"},{"id":"1-0","title":"第1章：ブロックを動かそう（順次処理と基本操作）"},{"id":"1-1","title":"1-1. 最初に命令を組んでみよう"},{"id":"1-2","title":"1-2. 順番につなげてストーリーを作ろう（順次処理）"},{"id":"1-3","title":"1-3. 予期せぬ動きを直そう（デバッグの第一歩）"},{"id":"2-0","title":"第2章：くり返すと条件で分ける（反復と条件分岐）"},{"id":"2-1","title":"2-1. 同じ動きを「くり返し」におまかせ（反復処理）"},{"id":"2-2","title":"2-2. スイッチで動きを変えよう（条件分岐）"},{"id":"2-3","title":"2-3. 反復と条件を組み合わせる"},{"id":"3-0","title":"第3章：算数と理科を動かして確かめる（教科連携）"},{"id":"3-1","title":"3-1. 【算数5年】正多角形の秘密と角度"},{"id":"3-2","title":"3-2. 【理科6年】電気の利用とセンサー自動制御"},{"id":"3-3","title":"3-3. 【算数5・6年】数と規則性・データの活用"},{"id":"4-0","title":"第4章：相手に伝わるアプリをつくる（画面設計と変数）"},{"id":"4-1","title":"4-1. 見やすく押しやすい画面をつくろう（画面設計・UI）"},{"id":"4-2","title":"4-2. 場面を切り替えよう（画面遷移とクイズ）"},{"id":"4-3","title":"4-3. 点数や名前を記憶させよう（変数と状態管理）"},{"id":"5-0","title":"第5章：【中学校 技術】双方向コンテンツと計測・制御（D 情報の技術）"},{"id":"5-1","title":"5-1. 双方向Webコンテンツと状態保持（D(2)）"},{"id":"5-2","title":"5-2. センサーとアクチュエータによる自動制御（D(3)）"},{"id":"5-3","title":"5-3. 計測・制御システムのデバッグと問題解決"},{"id":"6-0","title":"第6章：【高校 情報Ⅰ】アルゴリズムとPythonコード連携（情報Ⅰ入門）"},{"id":"6-1","title":"6-1. データ構造（配列・リスト）とループ処理"},{"id":"6-2","title":"6-2. 処理の共通化と関数（手続き・戻り値）"},{"id":"6-3","title":"6-3. 基本アルゴリズムとPythonコード連携"},{"id":"7-0","title":"第7章：学んだブロックで自分だけの作品をつくろう（自由制作・総合演習）"},{"id":"7-1","title":"7-1. つくりたい作品のテーマを選ぼう（構想とテーマ決定）"},{"id":"7-2","title":"7-2. 画面とプログラムを組み立てよう（作品の制作）"},{"id":"7-3","title":"7-3. さらなる表現に挑戦しよう（発表・発展教材への接続）"},{"id":"8-0","title":"第8章：情報の中で安全に楽しむ（情報モラル・リテラシー・AIの基本）"},{"id":"8-1","title":"8-1. 画像や文章を使うときの約束（著作権・ルール）"},{"id":"8-2","title":"8-2. 大切な情報を守ろう（個人情報と安全な利用）"},{"id":"8-3","title":"8-3. 自動化とAIの得意・苦手を知ろう（AIの基本・ファクトチェック）"},{"id":"appendix","title":"📎 付録：ブロックリファレンス ＆ トラブルシューティング"}];
+    const allPages = [{"id":"toc","title":"📋 目次・学習の進め方"},{"id":"toc_1","title":"💡 学習の進め方（原則5つのステップ）"},{"id":"toc_2","title":"📖 章の一覧（全8章）"},{"id":"1-0","title":"第1章：ブロックを動かそう（順次処理と基本操作）"},{"id":"1-1","title":"1-1. 最初に命令を組んでみよう"},{"id":"1-2","title":"1-2. 順番につなげてストーリーを作ろう（順次処理）"},{"id":"1-3","title":"1-3. 予期せぬ動きを直そう（デバッグの第一歩）"},{"id":"2-0","title":"第2章：くり返すと条件で分ける（反復と条件分岐）"},{"id":"2-1","title":"2-1. 同じ動きを「くり返し」におまかせ（反復処理）"},{"id":"2-2","title":"2-2. スイッチで動きを変えよう（条件分岐）"},{"id":"2-3","title":"2-3. 反復と条件を組み合わせる"},{"id":"3-0","title":"第3章：算数と理科を動かして確かめる（教科連携）"},{"id":"3-1","title":"3-1. 【算数5年】正多角形の秘密と角度"},{"id":"3-2","title":"3-2. 【理科6年】電気の利用とセンサー自動制御"},{"id":"3-3","title":"3-3. 【算数5・6年】数と規則性・データの活用"},{"id":"4-0","title":"第4章：相手に伝わるアプリをつくる（画面設計と変数）"},{"id":"4-1","title":"4-1. 見やすく押しやすい画面をつくろう（画面設計・UI）"},{"id":"4-2","title":"4-2. 場面を切り替えよう（画面遷移とクイズ）"},{"id":"4-3","title":"4-3. 点数や名前を記憶させよう（変数と状態管理）"},{"id":"5-0","title":"第5章：【中学校 技術】双方向コンテンツと計測・制御（D 情報の技術）"},{"id":"5-1","title":"5-1. 双方向Webコンテンツと状態保持（D(2)）"},{"id":"5-2","title":"5-2. センサーとアクチュエータによる自動制御（D(3)）"},{"id":"5-3","title":"5-3. 計測・制御システムのデバッグと問題解決"},{"id":"6-0","title":"第6章：【高校 情報Ⅰ】アルゴリズムとPythonコード連携（情報Ⅰ入門）"},{"id":"6-1","title":"6-1. データ構造（配列・リスト）とループ処理"},{"id":"6-2","title":"6-2. 処理の共通化と関数（手続き・戻り値）"},{"id":"6-3","title":"6-3. 基本アルゴリズムとPythonコード連携"},{"id":"7-0","title":"第7章：学んだブロックで自分だけの作品をつくろう（自由制作・総合演習）"},{"id":"7-1","title":"7-1. つくりたい作品のテーマを選ぼう（構想とテーマ決定）"},{"id":"7-2","title":"7-2. 画面とプログラムを組み立てよう（作品の制作）"},{"id":"7-3","title":"7-3. さらなる表現に挑戦しよう（発表・発展教材への接続）"},{"id":"8-0","title":"第8章：情報の中で安全に楽しむ（情報モラル・リテラシー・AIの基本）"},{"id":"8-1","title":"8-1. 画像や文章を使うときの約束（著作権・ルール）"},{"id":"8-2","title":"8-2. 大切な情報を守ろう（個人情報と安全な利用）"},{"id":"8-3","title":"8-3. 自動化とAIの得意・苦手を知ろう（AIの基本・ファクトチェック）"},{"id":"appendix_a","title":"付録A：ブロック一覧リファレンス（小・中・高全対応）"},{"id":"appendix_b","title":"付録B：困ったときのトラブルシューティング"}];
     let activePages = [];
     let currentIndex = 0;
 
@@ -1400,7 +1414,7 @@ customElements.define('gakushu-tag', class extends HTMLElement {});
           '            <button class="btn-ud" style="background:#475569;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;" title="キーボード・タップ選択操作の切り替え">♿ UD操作: OFF</button>\n' +
           '            <button class="btn-fullscreen" title="全画面で操作">🔍 全画面</button>\n' +
           '            <button class="btn-save-file" style="background:#475569;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;" title="この実習のプログラムをファイルに保存">💾 保存</button>\n' +
-          '            <button class="btn-open-file" style="background:#475569;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;" title="ファイルからこの実習のプログラムを読み込む">📂 開く</button>\n' +
+          '            <button class="btn-open-file" style="background:#475569;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;" title="ファイルからこの実習のプログラムを読み込む">📂 読込</button>\n' +
           '            <input type="file" class="input-open-file" accept=".json" style="display:none;">\n' +
           '          </div>\n' +
           '        </div>\n' +

@@ -5,11 +5,11 @@ const { test, expect } = require('@playwright/test');
 test('gakushu-table: customized built-in elementとして定義され、表内容が失われない', async ({ page }) => {
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
-  await page.goto('gakushucho_teach.html#news');
+  await page.goto('gakushucho_teach.html#appendix_g');
   const defined = await page.evaluate(() => !!customElements.get('gakushu-table'));
   expect(defined).toBe(true);
 
-  const table = page.locator('#page-news table.gakushu-table').first();
+  const table = page.locator('#page-appendix_g table.gakushu-table').first();
   await expect(table).toBeVisible();
   // HTML5パーサーはtr/th/tdを実際の<table>の中でないと破棄するため、
   // 中身（セルのテキスト）が実際に残っていることを直接確認する。
@@ -18,13 +18,6 @@ test('gakushu-table: customized built-in elementとして定義され、表内�
   const borderCollapse = await table.evaluate(el => getComputedStyle(el).borderCollapse);
   expect(borderCollapse).toBe('collapse');
   expect(errors).toEqual([]);
-});
-
-test('gakushu-table: index.htmlのお知らせ表も同じスタイルで描画される', async ({ page }) => {
-  await page.goto('index.html');
-  const table = page.locator('table.gakushu-table').first();
-  await expect(table).toBeVisible();
-  await expect(table.locator('tr').nth(1).locator('td').first()).toContainText('2026/07/30');
 });
 
 test('gakushu-note: 定義済みで、指導案注釈が指導者用ファイルでは表示され、学習者用ファイルには出力自体されない', async ({ page }) => {
@@ -78,19 +71,16 @@ test('blockly-lab: 定義済みで、内部構造がconnectedCallback()により
   await expect(lab.locator('.blockly-workspace-div')).toBeAttached();
 });
 
-test('portal_cards: gakushucho.md側のCARD定義がindex.htmlの巻末付録カードに反映される', async ({ page }) => {
+test('index.html: 学習者用/指導者用ファイルへのリンクカードとお知らせ・セットアップリンクが揃っている', async ({ page }) => {
   const errors = [];
   page.on('pageerror', e => errors.push(String(e)));
   await page.goto('index.html');
 
-  const setupCard = page.locator('a.card[href="gakushucho_teach.html#setup"]');
-  await expect(setupCard.locator('.card-title')).toHaveText('📦 オフライン設置・端末別セットアップガイド');
-  await expect(setupCard.locator('gakushu-tag')).toHaveText('巻末付録①');
-
-  // {{CH}}/{{SEC}}プレースホルダが実際の章・節数（8章24節）に置換されていること。
-  const lessonPlanCard = page.locator('a.card[href="gakushucho_teach.html#lesson_plan"]');
-  await expect(lessonPlanCard.locator('.card-title')).toHaveText('📋 全8章 授業詳細指導案・評価規準一覧');
-  await expect(lessonPlanCard.locator('.card-desc')).toContainText('全8章24節');
+  await expect(page.locator('a.card[href="gakushucho.html"] .card-title')).toHaveText('📘 ブロック学習帳');
+  await expect(page.locator('a.card[href="gakushucho_teach.html"] .card-title')).toHaveText('📗 ブロック学習帳指導書');
+  await expect(page.locator('a[href="gakushucho_teach.html#appendix_g"]')).toBeVisible();
+  await expect(page.locator('a[href="gakushucho_teach.html#appendix_e"]')).toBeVisible();
+  await expect(page.locator('a[href="gakushucho.zip"]')).toBeVisible();
   expect(errors).toEqual([]);
 });
 

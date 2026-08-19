@@ -66,12 +66,43 @@ test('extractH1Title: 先頭行の"# 見出し"を抽出する', () => {
   assert.equal(build.extractH1Title('見出しが無い本文', 'fallback'), 'fallback');
 });
 
-test('extractH1Title: 非章セクション6件すべてで実際のgakushucho.mdの見出しを正しく抽出できる（旧titlesMapとのドリフト再発防止）', () => {
+test('extractH1Title: toc（唯一H1見出しを残す非章セクション）で実際のgakushucho.mdの見出しを正しく抽出できる（旧titlesMapとのドリフト再発防止）', () => {
   const sections = build.parseMasterMd();
-  for (const key of ['setup', 'overview', 'news', 'toc', 'appendix', 'teacher_appendix']) {
-    const title = build.extractH1Title(sections[key], null);
-    assert.ok(title, key + ' の見出しが抽出できない');
-    assert.ok(!title.startsWith('#'), key + ' の見出しに"#"が残っている: ' + title);
+  const title = build.extractH1Title(sections.toc, null);
+  assert.ok(title, 'toc の見出しが抽出できない');
+  assert.ok(!title.startsWith('#'), 'toc の見出しに"#"が残っている: ' + title);
+});
+
+test('splitAppendixSections: gakushucho.mdの実データで巻末付録（appendix/overview/setup/news/teacher_appendix）が付録A〜Kとして節ごとに1ページへ分割される', () => {
+  const sections = build.parseMasterMd();
+  const groups = {
+    appendix: ['appendix_a', 'appendix_b'],
+    overview: ['appendix_c', 'appendix_d'],
+    setup: ['appendix_e', 'appendix_f'],
+    news: ['appendix_g', 'appendix_h'],
+    teacher_appendix: ['appendix_i', 'appendix_j', 'appendix_k'],
+  };
+  const allPages = [];
+  for (const [key, expectedIds] of Object.entries(groups)) {
+    const pages = build.splitAppendixSections(sections[key]);
+    assert.deepEqual(pages.map(p => p.pageId), expectedIds, key + 'のページID構成が想定と異なる');
+    allPages.push(...pages);
+  }
+  for (const p of allPages) {
+    assert.ok(p.pageTitle.startsWith('付録'), p.pageId + ' のタイトルが"付録"から始まらない: ' + p.pageTitle);
+    assert.ok(p.part.trim().startsWith('## '), p.pageId + ' の本文が見出し行から始まらない');
+  }
+});
+
+test('splitFlatSections: gakushucho.mdの実データでtoc（巻末付録の通し番号に含まれない唯一のセクション）が水平線区切りの節ごとに1ページへ分割される', () => {
+  const sections = build.parseMasterMd();
+  const pages = build.splitFlatSections('toc', sections.toc);
+  assert.ok(pages.length > 1, 'tocが1ページのまま分割されていない');
+  // 先頭ページのIDはキーそのもの（index.html等の既存リンク #setup / #news との後方互換のため）。
+  assert.equal(pages[0].pageId, 'toc');
+  for (let i = 1; i < pages.length; i++) {
+    assert.equal(pages[i].pageId, `toc_${i}`);
+    assert.ok(pages[i].part.trim().startsWith('## '), pages[i].pageId + ' の本文が見出し行から始まらない');
   }
 });
 
@@ -114,25 +145,6 @@ test('mdToHtml: blockly-embedプレースホルダを<blockly-lab>タグへ変�
   // 以前は約40行に展開していたが、コンポーネント化により1行のプレースホルダになった
   // （実サイズ削減の直接的な確認）。
   assert.ok(html.trim().split('\n').length <= 2, 'プレースホルダは1〜2行程度のはず: ' + html);
-});
-
-test('parsePortalCards: 実際のgakushucho.mdから5枚のポータルカードを読み取れる', () => {
-  const sections = build.parseMasterMd();
-  const cards = build.parsePortalCards(sections);
-  for (const key of ['setup', 'overview', 'news', 'teacher_appendix', 'lesson_plan']) {
-    assert.ok(cards[key], key + ' のCARD定義が見つからない');
-    assert.ok(cards[key].tagKind, key + '.tagKind');
-    assert.ok(cards[key].title, key + '.title');
-    assert.ok(cards[key].desc, key + '.desc');
-  }
-});
-
-test('parsePortalCards: 合成データからkey|tagKind|title|descを正しく分解する', () => {
-  const cards = build.parsePortalCards({
-    portal_cards: '<!-- CARD: setup | amber | タイトルA | 説明文A -->\n<!-- CARD: overview | indigo | タイトルB | 説明文B -->'
-  });
-  assert.deepEqual(cards.setup, { tagKind: 'amber', title: 'タイトルA', desc: '説明文A' });
-  assert.deepEqual(cards.overview, { tagKind: 'indigo', title: 'タイトルB', desc: '説明文B' });
 });
 
 test('fillCardPlaceholders: {{CH}}/{{SEC}}を実際の値に置換する', () => {

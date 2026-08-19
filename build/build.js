@@ -145,6 +145,10 @@ body {
 .section-page { display: none; }
 .section-page.active { display: block; animation: fadeIn 0.3s ease-in-out; }
 
+/* mdToHtml() の「- 」箇条書き変換（370行付近）が使う共通スタイル。インデント有無で見た目を出し分ける。 */
+li.li-nested { margin-left: 24px; list-style-type: circle; }
+li.li-heading { margin-top: 8px; font-weight: bold; }
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
@@ -310,9 +314,28 @@ function mdToHtml(mdText, chNum, explicitSecNum, isGuide = false, relPrefix = ''
   let html = '';
   let inTable = false;
   let tableHeaderDone = false;
+  let inCodeFence = false;
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i];
+
+    // ``` 〜 ``` の囲みは、中身をエスケープしたまま <pre> へそのまま出力する
+    // （囲み内の行は見出し・箇条書き・表などの他の変換ルールの対象にしない）。
+    if (line.trim() === '```') {
+      if (inTable) { html += '</table>\n'; inTable = false; }
+      if (!inCodeFence) {
+        inCodeFence = true;
+        html += '<pre style="background:#0f172a;color:#e2e8f0;padding:12px 16px;border-radius:8px;overflow-x:auto;font-family:monospace;font-size:0.85rem;line-height:1.6;">';
+      } else {
+        inCodeFence = false;
+        html += '</pre>\n';
+      }
+      continue;
+    }
+    if (inCodeFence) {
+      html += line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') + '\n';
+      continue;
+    }
 
     if (line.startsWith('<gakushu-note kind="success" class="teacher-guide-annotation">')) {
       if (inTable) { html += '</table>\n'; inTable = false; }
@@ -370,8 +393,8 @@ function mdToHtml(mdText, chNum, explicitSecNum, isGuide = false, relPrefix = ''
     } else if (line.trim().startsWith('- ')) {
       const indent = line.search(/\S/);
       const text = line.trim().substring(2);
-      const marginStyle = indent >= 2 ? 'margin-left: 24px; list-style-type: circle;' : 'margin-top: 8px; font-weight: bold;';
-      html += `<li style="${marginStyle}">${inlineFormatting(text, relPrefix)}</li>\n`;
+      const liClass = indent >= 2 ? 'li-nested' : 'li-heading';
+      html += `<li class="${liClass}">${inlineFormatting(text, relPrefix)}</li>\n`;
     } else if (/^\d+\.\s+/.test(line.trim())) {
       html += `<li>${inlineFormatting(line.trim().replace(/^\d+\.\s+/, ''), relPrefix)}</li>\n`;
     } else if (line.trim() === '---') {
@@ -498,7 +521,7 @@ function getSortedChapterKeys(sections) {
 }
 
 // 章本文を「章概要（## より前の導入文、secIdx=0）」と「## 区切りの各節（secIdx=1,2,...）」に分割する。
-// buildLessonPlanHtml・generateSingleGakushuchoHtmlのページ生成ループ・contentStats集計が共通で使う唯一の分割ロジック。
+// generateSingleGakushuchoHtmlのページ生成ループ・contentStats集計が共通で使う唯一の分割ロジック。
 function splitChapterSections(rawText) {
   const parts = rawText.split(/(?=^## )/m);
   const result = [];
@@ -513,6 +536,40 @@ function splitChapterSections(rawText) {
   return result;
 }
 
+// setup/overview/news/toc を、章節と同じ「水平線(---)で区切られた節は1ページに1つ」の原則で
+// 1ページずつに分割する。中身はsplitChapterSections()と同じ("## "見出し単位の分割＋先頭の導入文は
+// 独立した1ページ)だが、こちらは章番号を持たないため、先頭ページのIDはセクションキーそのもの
+// （既存の外部リンク `#setup`/`#news` との後方互換のため）、以降は `${key}_1`, `${key}_2`, ... とする。
+function splitFlatSections(key, rawText) {
+  const result = [];
+  splitChapterSections(rawText).forEach(({ secIdx, part, isChapterIntro }) => {
+    const pageId = isChapterIntro ? key : `${key}_${secIdx}`;
+    const firstLine = part.trim().split('\n')[0];
+    const pageTitle = isChapterIntro ? extractH1Title(part, key) : (cleanSectionHeading(firstLine) || firstLine.replace(/^## /, '').trim());
+    result.push({ pageId, pageTitle, part });
+  });
+  return result;
+}
+
+// appendix/overview/setup/news/teacher_appendix を "## 付録X：見出し" 単位で1ページずつに分割する。
+// 章節と同じく「関連の薄い複数の節を1ページにまとめない」原則に揃えるためのもの。
+// 全ての巻末付録ページに通しの英字（A, B, C...）を振ることで採番方式を一本化している。
+function splitAppendixSections(rawText) {
+  const parts = rawText.split(/(?=^## )/m);
+  const result = [];
+  parts.forEach(part => {
+    const trimmed = part.trim();
+    if (!trimmed.startsWith('## ')) return;
+    const firstLine = trimmed.split('\n')[0];
+    const letterMatch = firstLine.match(/^## 付録([A-Za-z])[：:]/);
+    if (!letterMatch) return;
+    const pageId = `appendix_${letterMatch[1].toLowerCase()}`;
+    const pageTitle = firstLine.replace(/^## /, '').trim();
+    result.push({ pageId, pageTitle, part });
+  });
+  return result;
+}
+
 // "## N-M. 見出し" 形式の1行目から、番号プレフィックスを除いた見出し文字列を取り出す（無ければnull）。
 function cleanSectionHeading(firstLine) {
   const titleMatch = firstLine.match(/^## (.*$)/);
@@ -521,7 +578,7 @@ function cleanSectionHeading(firstLine) {
 }
 
 // セクション本文の先頭行にある "# 見出し" をナビ表示名として抽出する。
-// 章ページ側（buildLessonPlanHtml等）が既に採用している「実見出しから導出する」
+// 章ページ側が既に採用している「実見出しから導出する」
 // 方式と同じで、非章セクション用にも横展開したもの。以前は titlesMap という
 // build.js側の別データで手書きしており、gakushucho.md側の実見出しと乖離していた
 // （2026-08-16、6件中5件が不一致と判明・修正）。
@@ -547,60 +604,11 @@ function computeContentStats(sections) {
   return { chapterCount: chapterKeys.length, sectionsByChapter, totalSections };
 }
 
-// gakushucho.md の portal_cards セクション（ページとしては生成されない、ポータルカードの
-// ラベル・説明文の置き場）から <!-- CARD: key | tagKind | title | desc --> 形式の行を読み取り、
-// key をキーとしたオブジェクトにする。以前は index.html 生成側（build.js）に直書きされていた。
-function parsePortalCards(sections) {
-  const raw = sections['portal_cards'] || '';
-  const cards = {};
-  const re = /<!--\s*CARD:\s*([a-zA-Z_]+)\s*\|\s*(\w+)\s*\|\s*(.+?)\s*\|\s*(.+?)\s*-->/g;
-  let m;
-  while ((m = re.exec(raw)) !== null) {
-    cards[m[1]] = { tagKind: m[2], title: m[3], desc: m[4] };
-  }
-  return cards;
-}
-
-// portal_cards内の {{CH}}(章数) / {{SEC}}(総節数) プレースホルダを実際の値に置換する
+// {{CH}}(章数) / {{SEC}}(総節数) プレースホルダを実際の値に置換する（README.md生成で使用）
 function fillCardPlaceholders(text, contentStats) {
   return text
     .replace(/\{\{CH\}\}/g, contentStats.chapterCount)
     .replace(/\{\{SEC\}\}/g, contentStats.totalSections);
-}
-
-function buildLessonPlanHtml(sections, relPrefix = '') {
-  const orderKeys = getSortedChapterKeys(sections);
-  let lessonPlanHtml = '';
-  orderKeys.forEach(k => {
-    if (!sections[k]) return;
-    const rawText = sections[k];
-    const chMatch = k.match(/^ch0*(\d+)$/i);
-    if (!chMatch) return;
-    const chNum = parseInt(chMatch[1], 10);
-
-    splitChapterSections(rawText).forEach(({ secIdx, part, isChapterIntro }) => {
-      if (isChapterIntro) return;
-      const firstLine = part.trim().split('\n')[0];
-      const cleanTitle = cleanSectionHeading(firstLine);
-      const secTitle = cleanTitle ? `${chNum}-${secIdx}. ${cleanTitle}` : `第${chNum}章 第${secIdx}節`;
-
-      const annotations = [];
-      const regex = /<!-- teacher-guide-start -->([\s\S]*?)<!-- teacher-guide-end -->/g;
-      let m;
-      while ((m = regex.exec(part)) !== null) {
-        annotations.push(m[1].trim());
-      }
-
-      if (annotations.length > 0) {
-        lessonPlanHtml += `<h2 style="color:#15803d;border-bottom:2px solid #bbf7d0;padding-bottom:6px;margin-top:32px;">${secTitle}</h2>\n`;
-        annotations.forEach(ann => {
-          const parsed = mdToHtml(ann, chNum, secIdx, true, relPrefix);
-          lessonPlanHtml += `<gakushu-note kind="success" class="teacher-guide-annotation" style="margin-bottom:20px;">\n${parsed}\n</gakushu-note>\n`;
-        });
-      }
-    });
-  });
-  return lessonPlanHtml;
 }
 
 function generateSingleGakushuchoHtml(sections, targetDir, forTeacher, mainTitle, outputFilename) {
@@ -613,26 +621,38 @@ function generateSingleGakushuchoHtml(sections, targetDir, forTeacher, mainTitle
   const pagesList = [];
   const pagesHtml = [];
 
-  // 指導者用ビルドのみ、指導者ハンドブック類（setup/overview/news/teacher_appendix）を巻末付録として内包する。
+  // 指導者用ビルドのみ、指導者ハンドブック類（overview/setup/news/teacher_appendix）を巻末付録として内包する。
   // 学習者用ビルドは章節本文・目次・付録のみで、指導者向けコンテンツは一切生成しない。
+  // overview/setup/news/appendix/teacher_appendixは全て「付録A, B, C...」という1つの通し文字で
+  // 採番される（gakushucho.md側の見出しに "## 付録X：" 形式で書かれている）。tocだけは目次であって
+  // 巻末付録ではないため、この通し番号には含めない。
   const chapterKeys = getSortedChapterKeys(sections);
   const orderKeys = forTeacher
-    ? ['toc', ...chapterKeys, 'appendix', 'setup', 'overview', 'news', 'teacher_appendix']
+    ? ['toc', ...chapterKeys, 'appendix', 'overview', 'setup', 'news', 'teacher_appendix']
     : ['toc', ...chapterKeys, 'appendix'];
 
   orderKeys.forEach(k => {
     if (!sections[k]) return;
     const rawText = sections[k];
 
-    if (k === 'setup' || k === 'overview' || k === 'news' || k === 'toc' || k === 'appendix' || k === 'teacher_appendix') {
-      const pageId = k;
-      const title = extractH1Title(rawText, k);
-      pagesList.push({ id: pageId, title: title });
-      const convertedHtml = mdToHtml(rawText, null, null, forTeacher, relPrefix);
-      pagesHtml.push(`
-    <div id="page-${pageId}" class="section-page" data-page-id="${pageId}" data-page-title="${title}">
+    if (k === 'toc') {
+      splitFlatSections(k, rawText).forEach(({ pageId, pageTitle, part }) => {
+        pagesList.push({ id: pageId, title: pageTitle });
+        const convertedHtml = mdToHtml(part, null, null, forTeacher, relPrefix);
+        pagesHtml.push(`
+    <div id="page-${pageId}" class="section-page" data-page-id="${pageId}" data-page-title="${pageTitle}">
       ${convertedHtml}
     </div>`);
+      });
+    } else if (k === 'appendix' || k === 'overview' || k === 'setup' || k === 'news' || k === 'teacher_appendix') {
+      splitAppendixSections(rawText).forEach(({ pageId, pageTitle, part }) => {
+        pagesList.push({ id: pageId, title: pageTitle });
+        const convertedHtml = mdToHtml(part, null, null, forTeacher, relPrefix);
+        pagesHtml.push(`
+    <div id="page-${pageId}" class="section-page" data-page-id="${pageId}" data-page-title="${pageTitle}">
+      ${convertedHtml}
+    </div>`);
+      });
     } else {
       const chMatch = k.match(/^ch0?(\d+)$/);
       if (!chMatch) return;
@@ -671,20 +691,6 @@ function generateSingleGakushuchoHtml(sections, targetDir, forTeacher, mainTitle
       });
     }
   });
-
-  // 全8章詳細指導案 (lesson_plan) は指導者用ビルドのみ内包セクションとして生成
-  if (forTeacher) {
-    const extractedLessonPlanHtml = buildLessonPlanHtml(sections, relPrefix);
-    pagesList.push({ id: 'lesson_plan', title: `📋 全${contentStats.chapterCount}章 授業詳細指導案一覧` });
-    pagesHtml.push(`
-    <div id="page-lesson_plan" class="section-page" data-page-id="lesson_plan" data-page-title="📋 全${contentStats.chapterCount}章 授業詳細指導案一覧">
-      <gakushu-note kind="success" style="margin-bottom:24px;">
-        <h2 style="margin-top:0;color:#166534;">📋 教員・指導者用 詳細指導案一覧</h2>
-        <p style="margin:0;font-size:0.9rem;color:#15803d;">全${contentStats.chapterCount}章${contentStats.totalSections}節の授業フロー、口頭メッセージ、観点別評価規準を網羅した指導用参考資料です。</p>
-      </gakushu-note>
-      ${extractedLessonPlanHtml}
-    </div>`);
-  }
 
   const fullSpaHtml = `<!DOCTYPE html>
 <html lang="ja">
@@ -1206,7 +1212,7 @@ function generateSingleGakushuchoHtml(sections, targetDir, forTeacher, mainTitle
           '            <button class="btn-ud" style="background:#475569;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;" title="キーボード・タップ選択操作の切り替え">♿ UD操作: OFF</button>\\n' +
           '            <button class="btn-fullscreen" title="全画面で操作">🔍 全画面</button>\\n' +
           '            <button class="btn-save-file" style="background:#475569;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;" title="この実習のプログラムをファイルに保存">💾 保存</button>\\n' +
-          '            <button class="btn-open-file" style="background:#475569;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;" title="ファイルからこの実習のプログラムを読み込む">📂 開く</button>\\n' +
+          '            <button class="btn-open-file" style="background:#475569;color:white;border:none;padding:6px 12px;border-radius:6px;font-weight:bold;cursor:pointer;" title="ファイルからこの実習のプログラムを読み込む">📂 読込</button>\\n' +
           '            <input type="file" class="input-open-file" accept=".json" style="display:none;">\\n' +
           '          </div>\\n' +
           '        </div>\\n' +
@@ -2425,7 +2431,6 @@ function validatePresetReferences(sections, presets) {
 
 // generateSingleGakushuchoHtml等がクロージャ経由で参照するため、モジュールトップレベルに置く
 let contentStats;
-let portalCards;
 
 // 実際のビルド実行（ファイル書き込み等の副作用）をrunBuild()にまとめ、build_all.js等から
 // 明示的に呼び出す形にする。テストコードは module.exports 経由で純粋ロジックだけを使える。
@@ -2434,11 +2439,10 @@ function runBuild() {
 const masterSections = parseMasterMd();
 validatePresetReferences(masterSections, PRESETS);
 contentStats = computeContentStats(masterSections);
-portalCards = parsePortalCards(masterSections);
 
 console.log('\n=== Building Single Integrated SPA (学習者用 gakushucho.html / 指導者用 gakushucho_teach.html) ===');
 generateSingleGakushuchoHtml(masterSections, rootDir, false, '📘 ブロック学習帳', 'gakushucho.html');
-generateSingleGakushuchoHtml(masterSections, rootDir, true, '📗 指導用学習帳', 'gakushucho_teach.html');
+generateSingleGakushuchoHtml(masterSections, rootDir, true, '📗 ブロック学習帳指導書', 'gakushucho_teach.html');
 
 // devel/*.html コンパイル生成
 console.log('\n=== Building devel/*.html (内部開発用ドキュメント類 [ref01, changelog]) ===');
@@ -2462,65 +2466,36 @@ const portalHtml = `<!DOCTYPE html>
   <div class="container">
     <h1>小・中・高対応 プログラミング・情報教材 『ブロック学習帳』</h1>
     <p style="font-size:1.05rem;line-height:1.7;color:#334155;margin-bottom:20px;">
-      『ブロック学習帳』へようこそ！小学校の基礎から中学校技術科、高等学校「情報Ⅰ」まで対応した統合型プログラミング学習教材です。ダウンロードと展開にはネットワーク接続が必要ですが、展開後は授業中オフラインでご利用いただけます（下記のセットアップ手順をご覧ください）。児童生徒が直感的に動かせるブロック操作から、共通テスト標準言語 (DNCL) や Python へのステップアップまでスムーズに接続します。
+      『ブロック学習帳』へようこそ！小学校の基礎から中学校技術科、高等学校「情報Ⅰ」まで対応した統合型プログラミング学習教材です。ダウンロードと展開にはネットワーク接続が必要ですが、展開後は授業中オフラインでご利用いただけます（下記のセットアップ手順をご覧ください）。児童生徒が直感的に動かせるブロック操作から、共通テスト用プログラム表記（DNCL）や Python へのステップアップまでスムーズに接続します。
     </p>
 
-    <!-- 🌟 最新のお知らせ・更新履歴インライン掲載 -->
-    <gakushu-note kind="announcement" style="margin-bottom:24px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+    <!-- 更新履歴は正本（gakushucho.md「更新履歴」節）を指導書側に1本化し、ここでは複製しない -->
+    <gakushu-note kind="announcement" style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
         <h3 style="margin:0;color:#92400e;font-size:1.05rem;display:flex;align-items:center;gap:6px;">
-          <span>🌟 最新のお知らせ・更新履歴 (News)</span>
+          <span>📅 更新履歴</span>
         </h3>
-        <a href="gakushucho_teach.html#news" style="font-size:0.85rem;color:#b45309;font-weight:bold;text-decoration:underline;">詳細ページを見る ➔</a>
+        <a href="gakushucho_teach.html#appendix_g" style="font-size:0.85rem;color:#b45309;font-weight:bold;text-decoration:underline;">更新履歴を見る ➔</a>
       </div>
-      
-      <!-- レスポンシブ スクロールコンテナ -->
-      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-        <table is="gakushu-table" class="gakushu-table" role="table" style="min-width:280px;">
-          <tr>
-            <th style="width:120px;">日付</th>
-            <th>区分</th>
-          </tr>
-          <tr>
-            <td style="font-weight:bold;color:#1e293b;">2026/07/30</td>
-            <td style="font-weight:bold;color:#ea580c;">プロジェクト開始</td>
-          </tr>
-          <tr>
-            <td style="color:#64748b;">2026/--/--</td>
-            <td style="font-weight:bold;color:#d97706;">クローズドβテスト開始</td>
-          </tr>
-          <tr>
-            <td style="color:#64748b;">2026/--/--</td>
-            <td style="font-weight:bold;color:#2563eb;">オープンβテスト開始</td>
-          </tr>
-        </table>
-      </div>
-      <p style="margin:8px 0 0 0;font-size:0.8rem;color:#b45309;line-height:1.5;">
-        ※ 変更内容の詳細はオープンβテスト開始以降に記載します。
-      </p>
     </gakushu-note>
 
     <gakushu-note kind="highlight">
       <h3 style="margin-top:0;color:var(--primary-color);display:flex;align-items:center;gap:8px;">
-        <span>📦 オフライン設置用 一括配布パッケージ ＆ セットアップ手順</span>
+        <span>📦 オフライン設置用 一括配布パッケージ</span>
       </h3>
       <p style="margin-bottom:16px;font-size:0.95rem;color:var(--text-color);">
         校内Webサーバーや端末のローカル環境へ導入・設置するための全ファイルを含むZIPパッケージです。
       </p>
 
-      <gakushu-note kind="neutral" style="margin-bottom:16px;font-size:0.9rem;">
-        <div style="font-weight:bold;margin-bottom:8px;color:#1e293b;">💡 かんたん2ステップの設置手順：</div>
-        <ol style="margin:0;padding-left:20px;line-height:1.7;">
-          <li><strong>① 指導者用として使う場合:</strong> <code>指導者用</code> フォルダを作成し、<code>gakushucho.zip</code> を全展開してそのまま配置します（<code>gakushucho_teach.html</code> から全指導案付きで起動）。</li>
-          <li><strong>② 学習者用として配布する場合:</strong> <code>学習者用</code> フォルダを作成して展開後、<code>gakushucho_teach.html</code> を削除して生徒端末へ配付します（<code>gakushucho.html</code> のみが残り、指導案を含まない状態になります）。</li>
-        </ol>
+      <gakushu-note kind="announcement" style="margin-bottom:16px;font-size:0.9rem;">
+        ⚠️ <strong>学習者に配布する場合は、必ず <code>gakushucho_teach.html</code> を削除してください</strong>（指導案・評価規準など指導者向けの内容が含まれるため）。手順の詳細は下記リンク先をご覧ください。
       </gakushu-note>
 
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
         <a href="gakushucho.zip" style="display:inline-flex;align-items:center;gap:6px;background:var(--primary-color);color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;box-shadow:0 4px 12px rgba(37,99,235,0.25);">
           <span>📦 gakushucho.zip をダウンロード</span>
         </a>
-        <a href="gakushucho_teach.html#setup" style="display:inline-flex;align-items:center;gap:6px;background:#475569;color:white;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">
+        <a href="gakushucho_teach.html#appendix_e" style="display:inline-flex;align-items:center;gap:6px;background:#475569;color:white;padding:12px 20px;border-radius:8px;text-decoration:none;font-weight:bold;">
           <span>📖 詳細な導入・セットアップガイドを見る</span>
         </a>
       </div>
@@ -2534,21 +2509,9 @@ const portalHtml = `<!DOCTYPE html>
       </a>
       <a class="card" href="gakushucho_teach.html">
         <gakushu-tag kind="green">指導者用</gakushu-tag>
-        <div class="card-title">📗 指導用学習帳</div>
+        <div class="card-title">📗 ブロック学習帳指導書</div>
         <div class="card-desc">全${contentStats.chapterCount}章の学習帳、指導者用解説、統合ガイドライン、詳細指導案を網羅した指導者用ツール</div>
       </a>
-      ${['setup', 'overview', 'news', 'teacher_appendix', 'lesson_plan'].map((key, i) => {
-        const card = portalCards[key];
-        const num = '①②③④⑤'[i];
-        if (!card) return `<!-- portal_cardsセクションに ${key} のCARD定義がありません -->`;
-        const title = inlineFormatting(fillCardPlaceholders(card.title, contentStats));
-        const desc = inlineFormatting(fillCardPlaceholders(card.desc, contentStats));
-        return `<a class="card" href="gakushucho_teach.html#${key}">
-        <gakushu-tag kind="${card.tagKind}">巻末付録${num}</gakushu-tag>
-        <div class="card-title">${title}</div>
-        <div class="card-desc">${desc}</div>
-      </a>`;
-      }).join('\n      ')}
     </div>
   </div>
 </body>
@@ -2584,9 +2547,9 @@ console.log('\n=== Build completed successfully! ===\n');
 } // function runBuild()
 
 module.exports = {
-  parseMasterMd, mdToHtml, getSortedChapterKeys, splitChapterSections, cleanSectionHeading,
-  extractH1Title, computeContentStats, validatePresetReferences, buildLessonPlanHtml, PRESETS, CUSTOM_BLOCKS, runBuild,
-  parsePortalCards, fillCardPlaceholders
+  parseMasterMd, mdToHtml, getSortedChapterKeys, splitChapterSections, splitAppendixSections, splitFlatSections, cleanSectionHeading,
+  extractH1Title, computeContentStats, validatePresetReferences, PRESETS, CUSTOM_BLOCKS, runBuild,
+  fillCardPlaceholders
 };
 
 if (require.main === module) {
